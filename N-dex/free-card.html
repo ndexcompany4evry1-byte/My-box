@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>N'dex - بطاقتك الرقمية</title>
+    <meta name="description" content="منصة N'dex لإنشاء بطاقات تعريف رقمية احترافية باستخدام الذكاء الاصطناعي بخطوات سهلة وسريعة.">
+    <meta name="keywords" content="بطاقة تعريف رقمية, CV, سيرة ذاتية, AI, تصميم كرت شخصي">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css ">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://i.ibb.co/nqFMRwmL/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="64x64" href="https://i.ibb.co/hRbm5vd5/favicon-64x64.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="https://i.ibb.co/WWzMrBsV/favicon-96x96.png">
+
+
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:10px;font-family:'Tajawal',Arial,sans-serif;background:#f5f5f5;color:#222;direction:rtl}
+h1{text-align:center;color:#007bff;margin-bottom:20px}
+section{max-width:600px;margin:auto;background:#fff;border-radius:10px;padding:15px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.form-row{margin-bottom:12px}
+label{font-weight:700;font-size:14px}
+input,textarea{width:100%;padding:8px;border:1px solid #ccc;border-radius:5px;font-family:inherit;font-size:14px}
+button{cursor:pointer;padding:8px 15px;border:none;border-radius:5px;font-size:14px}
+.btn-primary{background:#007bff;color:#fff}
+.btn-danger{background:#dc3545;color:#fff}
+.btn-success{background:#28a745;color:#fff}
+.buttons{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:15px}
+
+/* البطاقة */
+.card-wrapper{display:flex;flex-direction:column;align-items:center;margin:20px 0}
+.card-container{
+  position:relative;width:100%;max-width:400px;height:220px;margin:auto;perspective:1000px;
+}
+.card{
+  position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .6s;
+}
+.card.flipped {
+  transform: rotateY(180deg);
+}
+.card-face{
+  position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:10px;
+  background:url('https://picsum.photos/seed/card/600/400 ') center/cover;
+  display:flex;align-items:center;justify-content:center;color:#ffd700;text-shadow:1px 1px 2px #000;
+}
+.card-front{z-index:2;padding:10px}
+.card-back{transform:rotateY(180deg);padding:10px}
+.logo{
+  width:60px;height:60px;object-fit:cover;border-radius:10px;position:absolute;top:15px;left:15px;border:2px solid #fff;z-index:10
+}
+@media(max-width:600px){
+  .logo {
+    width:45px;
+    height:45px;
+  }
+}
+.social{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:10px;z-index:10}
+.social a i{font-size:18px;color:#ffd700}
+
+/* مكان QR */
+.qr-wrapper{
+  position:absolute;right:15px;top:50%;transform:translateY(-50%);display:flex;align-items:center;justify-content:center;
+  width:60px;height:60px;background:rgba(255,255,255,.3);border-radius:8px;z-index:10
+}
+.qr-wrapper canvas{width:50px;height:50px}
+
+@media(max-width:600px){
+  .card-container{height:180px}
+  .logo{width:40px;height:40px}
+}
+</style>
+</head>
+<body>
+<h1>مولد بطاقة عمل احترافي</h1>
+
+<section>
+    <form id="dataForm">
+  <div class="form-row"><label>الشركة</label><input type="text" id="input-company"></div>
+  <div class="form-row"><label>رقم الهاتف*</label><input type="tel" id="input-phone" required></div>
+  <div class="form-row"><label>البريد الإلكتروني</label><input type="email" id="input-email"></div>
+  <div class="form-row"><label>عنوان المكتب</label><input type="text" id="input-address"></div>
+  <div class="form-row"><label>حساب فيسبوك</label><input type="text" id="input-facebook"></div>
+  <div class="form-row"><label>حساب تويتر</label><input type="text" id="input-twitter"></div>
+  <div class="form-row"><label>حساب لنكدإن</label><input type="text" id="input-linkedin"></div>
+  <div class="form-row"><label>ملاحظة</label><textarea id="input-note" rows="2"></textarea></div>
+  <div class="form-row"><label>رفع شعار الشركة</label><input type="file" id="input-logo" accept="image/*"></div>
+  <div class="buttons">
+    <button type="button" class="btn-primary" id="generateBtn">إنشاء البطاقة</button>
+    <button type="button" class="btn-danger" id="resetBtn">إعادة تعيين</button>
+    <button type="button" class="btn-success" id="printBtn">طباعة</button>
+    <button type="button" class="btn-primary" id="downloadBtn">تحميل PNG</button>
+  </div>
+</section>
+
+<div class="card-wrapper">
+  <div class="card-container" id="cardContainer">
+    <div class="card">
+            <div class="card-face card-front">
+        <img class="logo" id="cardLogo" style="display:none;">
+        <div style="text-align:center;line-height:1.4;max-width:60%">
+          <p id="cardCompany" style="margin:0;font-weight:700"></p>
+          <p id="cardPhone" style="margin:0;font-size:12px"></p>
+          <p id="cardEmail" style="margin:0;font-size:12px"></p>
+          <p id="cardAddress" style="margin:0;font-size:12px"></p>
+          <p id="cardNote" style="margin:0;font-size:11px;font-style:italic"></p>
+        </div>
+        <div class="qr-wrapper">
+          <canvas id="qrcode"></canvas>
+        </div>
+        <div class="social" id="cardSocial"></div>
+      </div>
+            <div class="card-face card-back">
+        <div style="text-align:center">
+          <h4 style="margin:0 0 10px">بطاقة عمل</h4>
+          <p id="cardNoteBack" style="margin:0;font-size:13px"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <button id="flipBtn" style="margin-top:10px" class="btn-primary">قلب البطاقة</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js "></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js "></script>
+<script>
+function fillCard(){
+  const dataMap = {
+    'cardCompany': 'input-company',
+    'cardPhone': 'input-phone',
+    'cardEmail': 'input-email',
+    'cardAddress': 'input-address',
+    'cardNote': 'input-note'
+  };
+
+  for (const cardId in dataMap) {
+    const inputId = dataMap[cardId];
+    const cardEl = document.getElementById(cardId);
+    const inputEl = document.getElementById(inputId);
+    
+    if (cardEl && inputEl) {
+      const value = inputEl.value.trim();
+      cardEl.textContent = value;
+      cardEl.style.display = value ? 'block' : 'none';
+    }
+  }
+
+  const noteBackEl = document.getElementById('cardNoteBack');
+  const noteVal = document.getElementById('input-note').value.trim();
+  if (noteBackEl) {
+    noteBackEl.textContent = noteVal || 'بطاقة عمل احترافية';
+  }
+
+  const logoInput = document.getElementById('input-logo');
+  const cardLogo = document.getElementById('cardLogo');
+  if(logoInput.files && logoInput.files[0]){
+    const reader = new FileReader();
+    reader.onload = e => {
+      cardLogo.src = e.target.result;
+      cardLogo.style.display = 'block';
+    };
+    reader.readAsDataURL(logoInput.files[0]);
+  } else {
+    cardLogo.style.display = 'none';
+  }
+
+  const socialContainer = document.getElementById('cardSocial');
+  socialContainer.innerHTML = '';
+  ['facebook','twitter','linkedin'].forEach(s => {
+    const inputVal = document.getElementById('input-' + s).value.trim();
+    if(inputVal){
+      const a = document.createElement('a');
+      a.href = `https://${s}.com/${inputVal}`;
+      a.target = '_blank';
+      a.innerHTML = `<i class="fab fa-${s === 'linkedin' ? 'linkedin-in' : s}"></i>`;
+      socialContainer.appendChild(a);
+    }
+  });
+
+  if(!window.qr) {
+    window.qr = new QRious({element: document.getElementById('qrcode'), size: 50});
+  }
+  window.qr.value = document.getElementById('input-phone').value || 'Card';
+}
+
+['input','change'].forEach(ev => document.querySelectorAll('#dataForm input, #dataForm textarea').forEach(el => el.addEventListener(ev, fillCard)));
+document.getElementById('generateBtn').addEventListener('click', fillCard);
+document.getElementById('resetBtn').addEventListener('click', () => {
+  document.getElementById('dataForm').reset();
+  fillCard();
+});
+document.getElementById('printBtn').addEventListener('click', () => window.print());
+document.getElementById('downloadBtn').addEventListener('click', () => {
+  html2canvas(document.getElementById('cardContainer'), {useCORS: true}).then(c => {
+    const a = document.createElement('a');
+    a.href = c.toDataURL();
+    a.download = 'card.png';
+    a.click();
+  });
+});
+document.getElementById('flipBtn').addEventListener('click', () => document.querySelector('.card').classList.toggle('flipped'));
+
+fillCard();
+</script>
+</body>
+</html>

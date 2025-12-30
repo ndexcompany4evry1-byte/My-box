@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://n-dex-2a601.web.app/sitemap.xml
