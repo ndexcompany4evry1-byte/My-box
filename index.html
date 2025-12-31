@@ -1,591 +1,606 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="renderer" content="webkit">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>360 Extreme Browser</title>
-  <link rel="shortcut icon" href="https://bs1.360sres.com/static/26b7ed8e98672fce.ico">
-  <meta name="description" content="360 Extreme Browser">
-  <meta name="keywords" content="360 Extreme Browser">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>N'dex - Modern Landing Page</title>
   <style>
-    html,
-    body,
-    div,
-    img,
-    p,
-    span,
-    em,
-    dl,
-    dt,
-    dd,
-    h1 {
-      padding: 0;
+    /* ================== GENERAL ================== */
+    :root {
+      --bg-light: #ffffff;
+      --bg-dark: #121212;
+      --text-light: #000000;
+      --text-dark: #ffffff;
+      --accent: #6366f1;
+      --gray: #e0e0e0;
+      --transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    * {
       margin: 0;
-    }
-    html,
-    body {
-      height: 100%;
-    }
-    body {
-      font-family: MicrosoftYaHei;
-    }
-    a {
-      text-decoration: none;
-    }
-    img {
-      border: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
 
-    .header {
-      padding: 16px 40px 0;
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      transition: var(--transition);
+      overflow-x: hidden;
+    }
+
+    /* ================== INTRO ANIMATION ================== */
+    .intro {
       position: fixed;
-      left: 0;
       top: 0;
-      right: 0;
-      z-index: 6;
-    }
-    .header .logo {
-      float: left;
-      font-size: 16px;
-      color: #000;
-      line-height: 28px;
-    }
-    .header .logo img {
-      width: 28px;
-      height: 28px;
-      margin-right: 8px;
-      display: inline-block;
-      vertical-align: middle;
-    }
-    .header-right {
-      float: right;
-    }
-    .header-right > a,
-    .header-right-contact {
-      float: right;
-      margin-left: 24px;
-      font-size: 15px;
-      color: #000;
-      line-height: 28px;
-      position: relative;
-    }
-    .header-right > a:first-child {
-      margin-left: 16px;
-    }
-    .header-right > a i {
-      width: 1px;
-      height: 16px;
-      background-color: #fff;
-      opacity: 0.5;
-      float: left;
-      display: inline-block;
-      margin-right: 16px;
-      margin-top: 6px;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      background: white;
+      opacity: 1;
+      pointer-events: none;
     }
 
-    .header-right > a em {
-      display: inline-block;
-      margin-left: 4px;
-      float: right;
-      width: 18px;
-      height: 18px;
-      border: 1px solid #ff9852;
-      border-radius: 2px;
-      color: #ff9852;
-      line-height: 16px;
-      font-style: normal;
-      text-align: center;
-      font-size: 12px;
-      vertical-align: middle;
-      margin-top: 5px;
+    .intro-text {
+      font-size: clamp(8rem, 25vw, 20rem);
+      font-weight: 900;
+      line-height: 1;
+      background: radial-gradient(circle at 30% 30%, #ff9a9e 0%, #fad0c4 30%, #fad0c4 50%, #a1c4fd 80%, #c2e9fb 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      transition: var(--transition);
     }
 
-    .header-right-contact > img {
-      display: inline-block;
-      font-size: 0px;
-      width: 16px;
-      height: 14px;
-      margin-right: 4px;
-      vertical-align: middle;
-    }
-    .header-right-contact > img.img2 {
-      display: none;
-    }
-    .header-right-contact .qrcode {
-      position: absolute;
-      top: 28px;
-      right: 0;
-      background: #fff;
-      border: 1px solid #d6d6d6 \9;
-      border-radius: 2px;
-      width: 200px;
-      padding: 8px 0;
-      display: none;
-      box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.2);
-    }
-    .header-right-contact:hover .qrcode {
-      display: block;
-    }
-    .header-right-contact .qrcode a {
-      height: 24px;
-      padding: 12px 0;
-      font-size: 14px;
-      color: #222222;
-      line-height: 24px;
-      display: block;
-      position: relative;
-      padding-left: 10px;
-    }
-    .header-right-contact .qrcode a > img {
-      width: 24px;
-      height: 24px;
-      float: left;
-      margin-right: 12px;
-      margin-left: 20px;
-      border-radius: 4px;
-    }
-    .header-right-contact .qrcode a:hover {
-      background: #efefef;
-    }
-    .header-right-contact .qrcode a:hover dl {
-      display: block;
-    }
-    .header-right-contact .qrcode a dl {
-      width: 164px;
-      position: absolute;
-      top: -4px;
-      right: 196px;
-      border-radius: 2px;
-      background-color: #fff;
-      border: 1px solid #d6d6d6 \9;
-      box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.2);
-      padding: 8px 8px 16px;
-      display: none;
-    }
-    .header-right-contact .qrcode a dl dt {
-      width: 100%;
-    }
-    .header-right-contact .qrcode a dl dt img {
-      width: 100%;
-      display: block;
-    }
-    .header-right-contact .qrcode a dl dd {
-      margin: 8px 4px 0;
-      font-size: 12px;
-      color: #222222;
-      line-height: 16px;
-      text-align: center;
-    }
-    .header-right-contact .qrcode a dl dd em {
-      color: #0079ff;
-      font-style: normal;
-    }
-
-    .the-tail {
-      position: absolute;
-      left: 0;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 5;
-      background: #000;
-      overflow: hidden;
-    }
-    .the-tail .the-tail-svg {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 3;
-      font-size: 0;
-      background: url(https://se2.360simg.com/t015badafa0fe539b59.png) center no-repeat;
-      background-size: cover;
-      -moz-background-size: cover;
-      -webkit-background-size: cover;
-      -o-background-size: cover;
-      filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod='scale')";
-    }
-    .the-tail .the-tail-feng {
-      position: absolute;
-      left: 50%;
-      top: 5%;
-      bottom: 5%;
-      margin-left: -50px;
-      width: 100px;
-      z-index: 2;
-    }
-    .the-tail .the-tail-feng-img {
-      display: block;
-      height: 100%;
-      position: absolute;
-      left: 50%;
-      top: 0;
-    }
-    .the-tail p {
-      font-size: 32px;
-      color: #000;
-      line-height: 42px;
-      position: absolute;
-      top: 50%;
-      margin-top: -21px;
-      z-index: 4;
-    }
-    .the-tail p.p-left {
-      right: 58%;
-      text-align: right;
-    }
-    .the-tail p.p-right {
-      left: 58%;
-      text-align: left;
-    }
-    .the-tail span {
-      width: 200px;
-      position: absolute;
-      left: 50%;
-      top: 85%;
-      z-index: 4;
-      margin-left: -100px;
-      font-size: 12px;
-      color: #666666;
-      line-height: 16px;
-      text-align: center;
-    }
-    .the-tail span img {
-      width: 32px;
-      height: 32px;
-      display: block;
-      margin: 0 auto;
-      margin-bottom: 12px;
-    }
-
-    .main {
-      position: absolute;
-      left: 0;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 1;
-      background: #000;
+    .intro.hidden {
       opacity: 0;
-      overflow: hidden;
-      min-width: 1020px;
-      min-height: 600px;
-    }
-    .main-box {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      width: 620px;
-      height: 290px;
-      margin-top: -180px;
-      margin-left: -310px;
-      z-index: 2;
-    }
-    .main-title {
-      display: inline-block;
-      position: relative;
-      max-width: 500px;
-    }
-    .main-box h1 {
-      font-size: 30px;
-      color: #fff;
-      text-align: center;
-      position: relative;
-    }
-    .main-box h1 p {
-      padding: 0 4px;
-      font-size: 16px;
-      font-weight: bold;
-      line-height: 28px;
-      text-align: center;
-      background: #fe3a30;
-      height: 28px;
-      border-radius: 8px 2px 2px 0px;
-      position: absolute;
-      top: -15px;
-      right: 0;
-      transform: translateX(70%);
-    }
-    .main-box h1 + p {
-      margin-top: 16px;
-      font-size: 18px;
-      color: #b4b4b4;
-      line-height: 24px;
-      text-align: center;
-    }
-    .main-box a {
-      width: 208px;
-      height: 56px;
-      border-radius: 4px;
-      display: block;
-      margin: 48px auto 0;
-      font-size: 20px;
-      line-height: 56px;
-      color: #fff;
-      font-weight: bold;
-      text-align: center;
-      background: #0079ff;
-    }
-    .main-box a:hover {
-      background: #1a86ff;
-    }
-    .main-box a:active {
-      background: #1778e5;
-    }
-    .main .maxf {
-      height: 148%;
-      position: absolute;
-      z-index: 1;
-    }
-    .main .f-left {
-      top: -56%;
-      right: 80%;
-    }
-    .main .f-right {
-      bottom: -56%;
-      left: 80%;
+      pointer-events: none;
     }
 
-    .footer {
-      font-size: 12px;
-      line-height: 16px;
-      text-align: center;
-      position: absolute;
-      bottom: 24px;
-      left: 0;
-      width: 100%;
-      z-index: 2;
-      color: #888888;
+    .intro.hidden .intro-text {
+      transform: scale(0.2) translateY(-200px);
+      color: black;
     }
-    .footer span {
-      margin: 0 auto;
-    }
-    .footer span a,
-    .footer span p {
-      display: inline-block;
-      color: #585858;
-    }
-    .footer > a {
-      display: block;
-      margin: 8px auto 0;
-      line-height: 20px;
-      color: #585858;
-      text-align: center;
-    }
-    .footer > a img {
+
+    /* ================== CUSTOM CURSOR ================== */
+    .cursor {
+      position: fixed;
       width: 20px;
       height: 20px;
-      margin-right: 8px;
-      vertical-align: middle;
+      border: 2px solid var(--accent);
+      border-radius: 50%;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      z-index: 9999;
+      mix-blend-mode: difference;
+      transition: transform 0.1s ease;
     }
 
-    /* Animations */
-    .p2 {
-      min-width: 1020px;
-    }
-    .p2 .logo,
-    .p2 .header-right > a,
-    .p2 .header-right-contact {
-      color: #fff;
-    }
-    .p2 .img2 {
-      display: inline-block !important;
-    }
-    .p2 .img1 {
-      display: none;
-    }
-
-    .the-tail .the-tail-feng-img {
-      animation: mixAnimation 36s linear infinite;
-    }
-    .main .maxf {
-      animation: mixAnimation 36s linear infinite;
-      animation-play-state: paused;
-    }
-    .the-tail.fadeOut {
-      animation: fadeOut 0.4s ease-out forwards;
-      display: none\9;
-    }
-    .the-tail .the-tail-svg.bounceIn {
-      animation: bounceIn 1s ease-out forwards;
-      display: none\9;
-    }
-    .p2 .main {
-      animation: fadeIn 0.6s ease-out 0.2s forwards;
-      opacity: 1\9;
-    }
-    .p2 .main .maxf {
-      animation-play-state: running;
+    /* ================== HEADER ================== */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 999;
+      background: var(--bg);
+      transition: var(--transition);
     }
 
-    @keyframes mixAnimation {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(-360deg); }
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--text);
     }
-    @keyframes fadeOut {
-      0% { opacity: 1; }
-      100% { opacity: 0; }
+
+    .controls {
+      display: flex;
+      gap: 1rem;
     }
-    @keyframes bounceIn {
-      0% { transform: scale(1); }
-      100% { transform: scale(11.3); }
+
+    button {
+      background: none;
+      border: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      transition: var(--transition);
     }
-    @keyframes fadeIn {
-      0% { opacity: 0; }
-      100% { opacity: 1; }
+
+    button:hover {
+      background: var(--gray);
+    }
+
+    .dark button:hover {
+      background: #333;
+    }
+
+    /* ================== HERO ================== */
+    .hero {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 0 2rem;
+      margin-top: -80px;
+    }
+
+    .tagline {
+      font-size: 1.2rem;
+      margin-top: 1rem;
+      opacity: 0.8;
+    }
+
+    .scroll-indicator {
+      position: absolute;
+      bottom: 2rem;
+      font-size: 1.5rem;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+      }
+      40% {
+        transform: translateY(-10px);
+      }
+      60% {
+        transform: translateY(-5px);
+      }
+    }
+
+    /* ================== SLIDER ================== */
+    .slider {
+      width: 90%;
+      max-width: 800px;
+      margin: 2rem auto;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    .slider img {
+      width: 100%;
+      display: block;
+      height: 400px;
+      object-fit: cover;
+      border-radius: 24px;
+    }
+
+    /* ================== SECTIONS ================== */
+    section {
+      min-height: 100vh;
+      padding: 4rem 2rem;
+      position: relative;
+      display: flex;
+      align-items: center;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .section-content {
+      max-width: 800px;
+      z-index: 2;
+    }
+
+    .section-number {
+      position: absolute;
+      font-size: clamp(15rem, 30vw, 25rem);
+      font-weight: 900;
+      color: var(--gray);
+      opacity: 0.1;
+      z-index: 1;
+    }
+
+    .section-1,
+    .section-3,
+    .section-5,
+    .section-7 {
+      justify-content: flex-end;
+    }
+
+    .section-1 .section-number,
+    .section-3 .section-number,
+    .section-5 .section-number,
+    .section-7 .section-number {
+      right: 2rem;
+    }
+
+    .section-2,
+    .section-4,
+    .section-6 {
+      justify-content: flex-start;
+    }
+
+    .section-2 .section-number,
+    .section-4 .section-number,
+    .section-6 .section-number {
+      left: 2rem;
+    }
+
+    h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    p {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      opacity: 0.9;
+    }
+
+    /* ================== FOOTER ================== */
+    footer {
+      background: var(--bg);
+      color: var(--text);
+      padding: 3rem 2rem;
+      text-align: center;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 500;
+      opacity: 0.8;
+      transition: var(--transition);
+    }
+
+    .footer-links a:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+
+    .copyright {
+      opacity: 0.6;
+      font-size: 0.9rem;
+    }
+
+    /* ================== RESPONSIVE ================== */
+    @media (max-width: 768px) {
+      .intro-text {
+        font-size: clamp(6rem, 20vw, 15rem);
+      }
+
+      .logo {
+        font-size: 1.5rem;
+      }
+
+      .controls {
+        gap: 0.5rem;
+      }
+
+      button {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.8rem;
+      }
+
+      h2 {
+        font-size: 2rem;
+      }
+
+      .section-number {
+        font-size: clamp(10rem, 25vw, 18rem);
+      }
     }
   </style>
-  <script src="https://static.360totalsecurity.com/browser/static/extreme/lib/jquery-3.2.1.min.js"></script>
-  <script src="https://static.360totalsecurity.com/browser/static/extreme/lib/jquery.json.min.js"></script>
-  <script src="https://static.360totalsecurity.com/browser/static/extreme/lib/jquery.i18n.properties.js"></script>
 </head>
 <body>
-  <div class="header">
-    <span class="logo">
-      <img src="https://static.360totalsecurity.com/browser/static/extreme/img/t01042eb0a1f12fa7d1.png" alt="360 Extreme Browser">360 Extreme Browser
-    </span>
-    <div class="header-right">
-      <div class="header-right-contact">
-        <img src="https://static.360totalsecurity.com/browser/static/extreme/img/t018f7015275848f4d2.png" class="img1">
-        <img src="https://static.360totalsecurity.com/browser/static/extreme/img/t01971a5f45f49e7c7a.png" class="img2">
-        <span id="contactUs"></span>
-        <span class="qrcode">
-          <a target="_blank">360securebrowser@360.cn</a>
-        </span>
-      </div>
-    </div>
-  </div>
-  <div class="the-tail">
-    <div class="the-tail-svg">svg</div>
-    <div class="the-tail-feng">
-      <img class="the-tail-feng-img" src="https://static.360totalsecurity.com/browser/static/extreme/img/t01e6cee0a7665631f0.jpg" alt="">
-    </div>
-    <p id="new360x" class="p-left"></p>
-    <p id="64BitCore" class="p-right"></p>
-    <span>
-      <img src="https://static.360totalsecurity.com/browser/static/extreme/img/t0105dd13b93f306f9c.png">
-      <span id="slideWheel"></span>
-    </span>
-  </div>
-  <div class="main">
-    <div class="main-box">
-      <h1>
-        <div class="main-title">
-          <span id="mainTitle"></span>
-          <p id="core"></p>
-        </div>
-      </h1>
-      <p id="desc"></p>
-      <!-- زر "ابدأ الآن" بدلاً من "حمل الآن" -->
-      <a href="javascript:void(0);" id="startNow" title="ابدأ الآن"></a>
-    </div>
-    <img src="https://static.360totalsecurity.com/browser/static/extreme/img/t01e6cee0a7665631f0.jpg" class="maxf f-left" alt="" ondragstart="return false">
-    <img src="https://static.360totalsecurity.com/browser/static/extreme/img/t01e6cee0a7665631f0.jpg" class="maxf f-right" alt="" ondragstart="return false">
-    <div class="footer">© 2014 - 2025 Beijing Qihu Keji Co. Ltd.</div>
+  <!-- Intro Animation -->
+  <div class="intro" id="intro">
+    <div class="intro-text">N'dex</div>
   </div>
 
-  <script>
-    if (!Function.prototype.bind) {
-      Function.prototype.bind = function () {
-        if (typeof this !== "function") {
-          throw new TypeError("Function.prototype.bind - what is trying to be bound is not callable");
-        }
-        var _this = this, obj = arguments[0], ags = Array.prototype.slice.call(arguments, 1);
-        return function () { _this.apply(obj, ags); };
-      };
-    }
-    function addEventListener1(ele, event, fn) {
-      if (ele.addEventListener) ele.addEventListener(event, fn, false);
-      else ele.attachEvent("on" + event, fn.bind(ele));
-    }
-    function _$(el) {
-      if (el.indexOf(".") > -1) return document.querySelector(el);
-      else if (el.indexOf("#") > -1) return document.getElementById(el.substr(1));
-      else return document.getElementsByTagName(el)[0];
-    }
-  </script>
-  <script>
-    function getMid() {
-      try { return external.GetMID(external.GetSID(window)); } catch (e) { return ""; }
-    }
-    function sendGif(filename, _referer) {
-      var IMG = new Image();
-      IMG.src = "https://dd.browser.360.cn/static/a/" + filename + "?mid=" + getMid() + (_referer ? "&_referer=" + _referer : "") + "&" + new Date().getTime();
-    }
-    function GetQueryString(url, name) {
-      url = url.indexOf("?") > -1 ? url.split("?")[1] : url;
-      var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
-      var r = url.match(reg);
-      return r ? decodeURIComponent(r[2]) : null;
-    }
-  </script>
-  <script>
-    var channel = GetQueryString(location.href, "channel") || GetQueryString(location.href, "src");
-    var $theTail = _$(".the-tail"),
-        $feng = _$(".the-tail-feng"),
-        $fengImg = _$(".the-tail-feng-img"),
-        $startNow = _$("#startNow"),
-        $svg = _$(".the-tail-svg"),
-        $main = _$(".main");
-    var anima = true, timer = null;
+  <!-- Custom Cursor -->
+  <div class="cursor" id="cursor"></div>
 
-    function startAnimation() {
-      if (!anima) return;
-      anima = false;
-      removeEventListener1(document, "mousedown", startAnimation);
-      removeEventListener1(document, "mousewheel", startAnimation);
-      clearTimeout(timer);
-      timer = null;
-      $feng.style.animationPlayState = "paused";
-      $theTail.className += " fadeOut";
-      $svg.className += " bounceIn";
-      document.body.className = "p2";
+  <!-- Header -->
+  <header id="header">
+    <div class="logo" id="header-logo">N'dex</div>
+    <div class="controls">
+      <button id="lang-btn" class="lang-toggle">EN</button>
+      <button id="theme-btn" class="theme-toggle">☀️</button>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <div class="hero">
+    <div class="tagline" id="tagline">Discover the future of digital experiences</div>
+    <div class="scroll-indicator">↓</div>
+  </div>
+
+  <!-- Image Slider -->
+  <div class="slider">
+    <img src="https://placehold.co/800x400/6366f1/ffffff?text=Image+1" alt="Slide 1" loading="lazy" id="slide">
+  </div>
+
+  <!-- Sections 1-7 -->
+  <section class="section-1">
+    <div class="section-number">1</div>
+    <div class="section-content">
+      <h2 id="sec1-title">Innovation at its Core</h2>
+      <p id="sec1-desc">We blend cutting-edge technology with intuitive design to create seamless digital experiences that transform how you interact with the world.</p>
+    </div>
+  </section>
+
+  <section class="section-2">
+    <div class="section-number">2</div>
+    <div class="section-content">
+      <h2 id="sec2-title">Global Perspective</h2>
+      <p id="sec2-desc">Our solutions are built for a connected world, supporting multiple languages and cultural contexts to serve a truly global audience.</p>
+    </div>
+  </section>
+
+  <section class="section-3">
+    <div class="section-number">3</div>
+    <div class="section-content">
+      <h2 id="sec3-title">Sustainable Design</h2>
+      <p id="sec3-desc">We prioritize eco-friendly practices in our development process, reducing digital carbon footprint while maintaining high performance.</p>
+    </div>
+  </section>
+
+  <section class="section-4">
+    <div class="section-number">4</div>
+    <div class="section-content">
+      <h2 id="sec4-title">User-Centric Approach</h2>
+      <p id="sec4-desc">Every feature we build starts with deep user research, ensuring our products solve real problems and deliver genuine value.</p>
+    </div>
+  </section>
+
+  <section class="section-5">
+    <div class="section-number">5</div>
+    <div class="section-content">
+      <h2 id="sec5-title">Future-Ready</h2>
+      <p id="sec5-desc">Our architecture is designed to evolve, adapting to emerging technologies and changing user needs without requiring complete overhauls.</p>
+    </div>
+  </section>
+
+  <section class="section-6">
+    <div class="section-number">6</div>
+    <div class="section-content">
+      <h2 id="sec6-title">Security First</h2>
+      <p id="sec6-desc">We implement enterprise-grade security protocols to protect your data and ensure privacy is never compromised.</p>
+    </div>
+  </section>
+
+  <section class="section-7">
+    <div class="section-number">7</div>
+    <div class="section-content">
+      <h2 id="sec7-title">Join Our Journey</h2>
+      <p id="sec7-desc">Become part of a community that's shaping the future of digital interaction. Your voice matters in our continuous evolution.</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-links">
+      <a href="#" id="about">About</a>
+      <a href="#" id="contact">Contact</a>
+      <a href="#" id="privacy">Privacy</a>
+      <a href="#" id="terms">Terms</a>
+    </div>
+    <div class="copyright" id="copyright">© 2026 N'dex. All rights reserved.</div>
+  </footer>
+
+  <script>
+    // ================== LANGUAGE SYSTEM ==================
+    const translations = {
+      en: {
+        tagline: "Discover the future of digital experiences",
+        sec1: { title: "Innovation at its Core", desc: "We blend cutting-edge technology with intuitive design to create seamless digital experiences that transform how you interact with the world." },
+        sec2: { title: "Global Perspective", desc: "Our solutions are built for a connected world, supporting multiple languages and cultural contexts to serve a truly global audience." },
+        sec3: { title: "Sustainable Design", desc: "We prioritize eco-friendly practices in our development process, reducing digital carbon footprint while maintaining high performance." },
+        sec4: { title: "User-Centric Approach", desc: "Every feature we build starts with deep user research, ensuring our products solve real problems and deliver genuine value." },
+        sec5: { title: "Future-Ready", desc: "Our architecture is designed to evolve, adapting to emerging technologies and changing user needs without requiring complete overhauls." },
+        sec6: { title: "Security First", desc: "We implement enterprise-grade security protocols to protect your data and ensure privacy is never compromised." },
+        sec7: { title: "Join Our Journey", desc: "Become part of a community that's shaping the future of digital interaction. Your voice matters in our continuous evolution." },
+        about: "About",
+        contact: "Contact",
+        privacy: "Privacy",
+        terms: "Terms",
+        copyright: "© 2026 N'dex. All rights reserved."
+      },
+      fr: {
+        tagline: "Découvrez l'avenir des expériences numériques",
+        sec1: { title: "L'innovation au cœur", desc: "Nous combinons la technologie de pointe avec un design intuitif pour créer des expériences numériques fluides qui transforment votre interaction avec le monde." },
+        sec2: { title: "Perspective mondiale", desc: "Nos solutions sont conçues pour un monde connecté, prenant en charge plusieurs langues et contextes culturels pour servir un public véritablement mondial." },
+        sec3: { title: "Conception durable", desc: "Nous privilégions les pratiques écologiques dans notre processus de développement, réduisant l'empreinte carbone numérique tout en maintenant des performances élevées." },
+        sec4: { title: "Approche centrée utilisateur", desc: "Chaque fonctionnalité que nous développons commence par une recherche approfondie auprès des utilisateurs, garantissant que nos produits résolvent des problèmes réels et apportent une valeur réelle." },
+        sec5: { title: "Prêt pour l'avenir", desc: "Notre architecture est conçue pour évoluer, s'adaptant aux technologies émergentes et aux besoins changeants des utilisateurs sans nécessiter de refontes complètes." },
+        sec6: { title: "Sécurité d'abord", desc: "Nous mettons en œuvre des protocoles de sécurité de niveau entreprise pour protéger vos données et garantir que la confidentialité ne soit jamais compromise." },
+        sec7: { title: "Rejoignez notre voyage", desc: "Devenez membre d'une communauté qui façonne l'avenir de l'interaction numérique. Votre voix compte dans notre évolution continue." },
+        about: "À propos",
+        contact: "Contact",
+        privacy: "Confidentialité",
+        terms: "Conditions",
+        copyright: "© 2026 N'dex. Tous droits réservés."
+      },
+      ar: {
+        tagline: "اكتشف مستقبل التجارب الرقمية",
+        sec1: { title: "الابتكار في صميم عملنا", desc: "نجمع بين أحدث التقنيات والتصميم البديهي لإنشاء تجارب رقمية سلسة تُحدث تحولاً في طريقة تفاعلك مع العالم." },
+        sec2: { title: "رؤية عالمية", desc: "تم تصميم حلولنا لعالم متصل، حيث ندعم لغات متعددة وسياقات ثقافية لخدمة جمهور عالمي حقًا." },
+        sec3: { title: "تصميم مستدام", desc: "نحن نعطي الأولوية للممارسات الصديقة للبيئة في عملية التطوير لدينا، مما يقلل من البصمة الكربونية الرقمية مع الحفاظ على أداء عالٍ." },
+        sec4: { title: "نهج يركز على المستخدم", desc: "كل ميزة نقوم ببنائها تبدأ ببحث عميق مع المستخدمين، مما يضمن أن منتجاتنا تحل مشكلات حقيقية وتوفر قيمة حقيقية." },
+        sec5: { title: "جاهز للمستقبل", desc: "تم تصميم بنيتنا التحتية للتطور، والتكيف مع التقنيات الناشئة والاحتياجات المتغيرة للمستخدمين دون الحاجة إلى إصلاحات كاملة." },
+        sec6: { title: "الأمان أولاً", desc: "نحن نطبق بروتوكولات أمان على مستوى المؤسسات لحماية بياناتك وضمان عدم المساس بالخصوصية أبدًا." },
+        sec7: { title: "انضم إلى رحلتنا", desc: "كن جزءًا من مجتمع يشكّل مستقبل التفاعل الرقمي. صوتك مهم في تطورنا المستمر." },
+        about: "من نحن",
+        contact: "اتصل بنا",
+        privacy: "الخصوصية",
+        terms: "الشروط",
+        copyright: "© 2026 N'dex. جميع الحقوق محفوظة."
+      }
+    };
+
+    // Get user's preferred language
+    let currentLang = localStorage.getItem('language') || navigator.language.split('-')[0];
+    if (!['en', 'fr', 'ar'].includes(currentLang)) currentLang = 'en';
+
+    // Update all text elements
+    function updateLanguage(lang) {
+      document.getElementById('tagline').textContent = translations[lang].tagline;
+      document.getElementById('sec1-title').textContent = translations[lang].sec1.title;
+      document.getElementById('sec1-desc').textContent = translations[lang].sec1.desc;
+      document.getElementById('sec2-title').textContent = translations[lang].sec2.title;
+      document.getElementById('sec2-desc').textContent = translations[lang].sec2.desc;
+      document.getElementById('sec3-title').textContent = translations[lang].sec3.title;
+      document.getElementById('sec3-desc').textContent = translations[lang].sec3.desc;
+      document.getElementById('sec4-title').textContent = translations[lang].sec4.title;
+      document.getElementById('sec4-desc').textContent = translations[lang].sec4.desc;
+      document.getElementById('sec5-title').textContent = translations[lang].sec5.title;
+      document.getElementById('sec5-desc').textContent = translations[lang].sec5.desc;
+      document.getElementById('sec6-title').textContent = translations[lang].sec6.title;
+      document.getElementById('sec6-desc').textContent = translations[lang].sec6.desc;
+      document.getElementById('sec7-title').textContent = translations[lang].sec7.title;
+      document.getElementById('sec7-desc').textContent = translations[lang].sec7.desc;
+      document.getElementById('about').textContent = translations[lang].about;
+      document.getElementById('contact').textContent = translations[lang].contact;
+      document.getElementById('privacy').textContent = translations[lang].privacy;
+      document.getElementById('terms').textContent = translations[lang].terms;
+      document.getElementById('copyright').textContent = translations[lang].copyright;
+      
+      // Update language button
+      document.getElementById('lang-btn').textContent = lang.toUpperCase();
+      localStorage.setItem('language', lang);
+      currentLang = lang;
     }
 
-    timer = setTimeout(startAnimation, 2500);
-    addEventListener1($main, "animationend", function () {
-      $theTail.style.display = "none";
+    // Language toggle
+    document.getElementById('lang-btn').addEventListener('click', () => {
+      const langs = ['en', 'fr', 'ar'];
+      const currentIndex = langs.indexOf(currentLang);
+      const nextLang = langs[(currentIndex + 1) % langs.length];
+      updateLanguage(nextLang);
     });
-    addEventListener1(document, "mousedown", startAnimation);
-    addEventListener1(document, "mousewheel", startAnimation);
 
-    function update() {
-      var left = $feng.clientHeight / 2 - 60;
-      $fengImg.style.marginLeft = "-" + left + "px";
+    // ================== THEME SYSTEM ==================
+    function setTheme(theme) {
+      const root = document.documentElement;
+      if (theme === 'system') {
+        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        theme = systemPrefersDark ? 'dark' : 'light';
+      }
+      
+      if (theme === 'dark') {
+        root.style.setProperty('--bg', 'var(--bg-dark)');
+        root.style.setProperty('--text', 'var(--text-dark)');
+        document.body.classList.add('dark');
+        document.getElementById('theme-btn').textContent = '🌙';
+      } else {
+        root.style.setProperty('--bg', 'var(--bg-light)');
+        root.style.setProperty('--text', 'var(--text-light)');
+        document.body.classList.remove('dark');
+        document.getElementById('theme-btn').textContent = '☀️';
+      }
+      
+      localStorage.setItem('theme', theme);
     }
-    window.onresize = update;
-  </script>
-  <script>
-    var LANGUAGE_CODE = jQuery.i18n.normaliseLanguageCode({});
 
-    function loadProperties(type) {
-      jQuery.i18n.properties({
-        name: 'strings',
-        path: 'static/',
-        mode: 'map',
-        language: type,
-        cache: false,
-        encoding: 'UTF-8',
-        callback: function () {
-          $('#mainTitle').html($.i18n.prop('string_mainTitle'));
-          $('#core').html($.i18n.prop('string_core'));
-          $('#new360x').html($.i18n.prop('string_new360x'));
-          $('#64BitCore').html($.i18n.prop('string_64BitCore'));
-          $('#slideWheel').html($.i18n.prop('string_slideWheel'));
-          $('#desc').html($.i18n.prop('string_desc'));
-          $('#startNow').html($.i18n.prop('string_startNow') || 'ابدأ الآن'); // fallback
-          $('#startNow').attr('title', $.i18n.prop('string_startNow') || 'ابدأ الآن');
-          $('#contactUs').html($.i18n.prop('string_contactUs'));
+    // Theme toggle
+    document.getElementById('theme-btn').addEventListener('click', () => {
+      const currentTheme = localStorage.getItem('theme') || 'system';
+      const themes = ['light', 'dark', 'system'];
+      const currentIndex = themes.indexOf(currentTheme);
+      const nextTheme = themes[(currentIndex + 1) % themes.length];
+      setTheme(nextTheme);
+    });
+
+    // Initialize theme
+    const savedTheme = localStorage.getItem('theme') || 'system';
+    setTheme(savedTheme);
+
+    // ================== INTRO ANIMATION ==================
+    setTimeout(() => {
+      document.getElementById('intro').classList.add('hidden');
+    }, 2500);
+
+    // ================== SLIDER ==================
+    const images = [
+      'https://placehold.co/800x400/6366f1/ffffff?text=Image+1',
+      'https://placehold.co/800x400/8b5cf6/ffffff?text=Image+2',
+      'https://placehold.co/800x400/06b6d4/ffffff?text=Image+3',
+      'https://placehold.co/800x400/10b981/ffffff?text=Image+4',
+      'https://placehold.co/800x400/f59e0b/ffffff?text=Image+5'
+    ];
+    let currentSlide = 0;
+    const slideElement = document.getElementById('slide');
+
+    function nextSlide() {
+      currentSlide = (currentSlide + 1) % images.length;
+      slideElement.src = images[currentSlide];
+    }
+
+    setInterval(nextSlide, 3000);
+
+    // ================== SCROLL ANIMATIONS ==================
+    const sections = document.querySelectorAll('section');
+    
+    function checkScroll() {
+      sections.forEach(section => {
+        const sectionTop = section.getBoundingClientRect().top;
+        const sectionVisible = sectionTop < window.innerHeight - 200;
+        
+        if (sectionVisible) {
+          section.classList.add('visible');
         }
       });
     }
 
-    $(document).ready(function () {
-      LANGUAGE_CODE = GetQueryString(document.location.href, 'lang') || jQuery.i18n.normaliseLanguageCode({});
-      loadProperties(LANGUAGE_CODE);
+    window.addEventListener('scroll', checkScroll);
+    // Trigger on load
+    setTimeout(checkScroll, 100);
+
+    // ================== CUSTOM CURSOR ==================
+    const cursor = document.getElementById('cursor');
+    
+    document.addEventListener('mousemove', (e) => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top = e.clientY + 'px';
     });
+
+    document.addEventListener('mousedown', () => {
+      cursor.style.transform = 'translate(-50%, -50%) scale(0.8)';
+    });
+
+    document.addEventListener('mouseup', () => {
+      cursor.style.transform = 'translate(-50%, -50%) scale(1)';
+    });
+
+    // ================== INITIALIZE LANGUAGE ==================
+    updateLanguage(currentLang);
   </script>
 </body>
 </html>
