@@ -181,8 +181,6 @@
       border-radius: 50px;
       cursor: pointer;
       transition: var(--transition);
-      text-decoration: none;
-      display: inline-block;
       color: white;
       background: linear-gradient(45deg, #6366f1, #8b5cf6, #06b6d4, #10b981, #f59e0b);
       background-size: 300% 300%;
@@ -232,7 +230,7 @@
       z-index: 2000;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.8s ease, transform 0.8s ease;
+      transition: opacity 0.8s ease;
     }
 
     .exit-cover.active {
@@ -397,7 +395,6 @@
     <div class="logo" id="header-logo">N'dex</div>
     <div class="controls">
       <button id="lang-btn" class="lang-toggle">EN</button>
-      <!-- Theme toggle removed as requested -->
     </div>
   </header>
 
@@ -422,7 +419,45 @@
     </div>
   </section>
 
-  <!-- ... other sections remain unchanged ... -->
+  <section class="section-2">
+    <div class="section-number">2</div>
+    <div class="section-content">
+      <h2 id="sec2-title">Global Perspective</h2>
+      <p id="sec2-desc">Our solutions are built for a connected world, supporting multiple languages and cultural contexts to serve a truly global audience.</p>
+    </div>
+  </section>
+
+  <section class="section-3">
+    <div class="section-number">3</div>
+    <div class="section-content">
+      <h2 id="sec3-title">Sustainable Design</h2>
+      <p id="sec3-desc">We prioritize eco-friendly practices in our development process, reducing digital carbon footprint while maintaining high performance.</p>
+    </div>
+  </section>
+
+  <section class="section-4">
+    <div class="section-number">4</div>
+    <div class="section-content">
+      <h2 id="sec4-title">User-Centric Approach</h2>
+      <p id="sec4-desc">Every feature we build starts with deep user research, ensuring our products solve real problems and deliver genuine value.</p>
+    </div>
+  </section>
+
+  <section class="section-5">
+    <div class="section-number">5</div>
+    <div class="section-content">
+      <h2 id="sec5-title">Future-Ready</h2>
+      <p id="sec5-desc">Our architecture is designed to evolve, adapting to emerging technologies and changing user needs without requiring complete overhauls.</p>
+    </div>
+  </section>
+
+  <section class="section-6">
+    <div class="section-number">6</div>
+    <div class="section-content">
+      <h2 id="sec6-title">Security First</h2>
+      <p id="sec6-desc">We implement enterprise-grade security protocols to protect your data and ensure privacy is never compromised.</p>
+    </div>
+  </section>
 
   <section class="section-7">
     <div class="section-number">7</div>
@@ -443,28 +478,20 @@
     <div class="copyright" id="copyright">© 2026 N'dex. All rights reserved.</div>
   </footer>
 
-  <!-- Audio Element (hidden) -->
+  <!-- Hidden audio element -->
   <audio id="clickSound" src="https://www.soundjay.com/buttons/sounds/button-09.mp3" preload="auto"></audio>
 
   <script>
     // ================== AUTO THEME (SYSTEM ONLY) ==================
     const root = document.documentElement;
-    const setSystemTheme = () => {
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      if (prefersDark) {
-        root.style.setProperty('--bg', 'var(--bg-dark)');
-        root.style.setProperty('--text', 'var(--text-dark)');
-        document.body.classList.add('dark');
-      } else {
-        root.style.setProperty('--bg', 'var(--bg-light)');
-        root.style.setProperty('--text', 'var(--text-light)');
-        document.body.classList.remove('dark');
-      }
+    const applySystemTheme = () => {
+      const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      root.style.setProperty('--bg', isDark ? 'var(--bg-dark)' : 'var(--bg-light)');
+      root.style.setProperty('--text', isDark ? 'var(--text-dark)' : 'var(--text-light)');
+      document.body.classList.toggle('dark', isDark);
     };
-
-    // Apply on load & on system change
-    setSystemTheme();
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', setSystemTheme);
+    applySystemTheme();
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applySystemTheme);
 
     // ================== LANGUAGE SYSTEM ==================
     const translations = {
@@ -518,7 +545,6 @@
       }
     };
 
-    // Get user's preferred language
     let currentLang = localStorage.getItem('language') || navigator.language.split('-')[0];
     if (!['en', 'fr', 'ar'].includes(currentLang)) currentLang = 'en';
 
@@ -527,7 +553,18 @@
       document.getElementById('get-started').textContent = translations[lang].getStarted;
       document.getElementById('sec1-title').textContent = translations[lang].sec1.title;
       document.getElementById('sec1-desc').textContent = translations[lang].sec1.desc;
-      // ... يمكنك إضافة باقي الأقسام إذا أعدت إدخالها ...
+      document.getElementById('sec2-title').textContent = translations[lang].sec2.title;
+      document.getElementById('sec2-desc').textContent = translations[lang].sec2.desc;
+      document.getElementById('sec3-title').textContent = translations[lang].sec3.title;
+      document.getElementById('sec3-desc').textContent = translations[lang].sec3.desc;
+      document.getElementById('sec4-title').textContent = translations[lang].sec4.title;
+      document.getElementById('sec4-desc').textContent = translations[lang].sec4.desc;
+      document.getElementById('sec5-title').textContent = translations[lang].sec5.title;
+      document.getElementById('sec5-desc').textContent = translations[lang].sec5.desc;
+      document.getElementById('sec6-title').textContent = translations[lang].sec6.title;
+      document.getElementById('sec6-desc').textContent = translations[lang].sec6.desc;
+      document.getElementById('sec7-title').textContent = translations[lang].sec7.title;
+      document.getElementById('sec7-desc').textContent = translations[lang].sec7.desc;
       document.getElementById('about').textContent = translations[lang].about;
       document.getElementById('contact').textContent = translations[lang].contact;
       document.getElementById('privacy').textContent = translations[lang].privacy;
@@ -573,8 +610,9 @@
     function checkScroll() {
       sections.forEach(section => {
         const sectionTop = section.getBoundingClientRect().top;
-        const sectionVisible = sectionTop < window.innerHeight - 200;
-        if (sectionVisible) section.classList.add('visible');
+        if (sectionTop < window.innerHeight - 200) {
+          section.classList.add('visible');
+        }
       });
     }
     window.addEventListener('scroll', checkScroll);
@@ -599,26 +637,24 @@
     const clickSound = document.getElementById('clickSound');
 
     getStartedBtn.addEventListener('click', () => {
-      // Play sound
       clickSound.currentTime = 0;
-      clickSound.play().catch(e => console.log("Audio play failed:", e));
+      clickSound.play().catch(e => console.log("Audio play prevented:", e));
 
-      // Trigger animation
+      // Animate button
       getStartedBtn.style.transform = 'scale(50)';
       getStartedBtn.style.opacity = '0';
       getStartedBtn.style.pointerEvents = 'none';
 
-      // Show cover
+      // Show black cover
       setTimeout(() => {
         exitCover.classList.add('active');
-        // Navigate after cover is fully black
         setTimeout(() => {
-          window.location.href = 'next-page.html'; // ✅ Change this as needed
+          window.location.href = 'next-page.html';
         }, 800);
       }, 300);
     });
 
-    // ================== INITIALIZE LANGUAGE ==================
+    // Initialize
     updateLanguage(currentLang);
   </script>
 </body>
