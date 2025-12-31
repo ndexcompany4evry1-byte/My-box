@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -135,6 +134,7 @@
 
     /* ================== HERO ================== */
     .hero {
+      position: relative;
       height: 100vh;
       display: flex;
       flex-direction: column;
@@ -142,13 +142,55 @@
       align-items: center;
       text-align: center;
       padding: 0 2rem;
+      overflow: hidden;
       margin-top: -80px;
     }
 
+    /* Slider as background */
+    .hero-slider {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    .hero-slider img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.7;
+    }
+
+    .hero-content {
+      z-index: 2;
+      max-width: 800px;
+    }
+
     .tagline {
-      font-size: 1.2rem;
-      margin-top: 1rem;
-      opacity: 0.8;
+      font-size: 1.4rem;
+      margin-bottom: 1.5rem;
+      opacity: 0.9;
+    }
+
+    .get-started-btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 0.8rem 2rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: var(--transition);
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .get-started-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
     }
 
     .scroll-indicator {
@@ -156,6 +198,7 @@
       bottom: 2rem;
       font-size: 1.5rem;
       animation: bounce 2s infinite;
+      z-index: 2;
     }
 
     @keyframes bounce {
@@ -168,24 +211,6 @@
       60% {
         transform: translateY(-5px);
       }
-    }
-
-    /* ================== SLIDER ================== */
-    .slider {
-      width: 90%;
-      max-width: 800px;
-      margin: 2rem auto;
-      border-radius: 24px;
-      overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    }
-
-    .slider img {
-      width: 100%;
-      display: block;
-      height: 400px;
-      object-fit: cover;
-      border-radius: 24px;
     }
 
     /* ================== SECTIONS ================== */
@@ -309,6 +334,15 @@
         font-size: 0.8rem;
       }
 
+      .tagline {
+        font-size: 1.2rem;
+      }
+
+      .get-started-btn {
+        padding: 0.7rem 1.8rem;
+        font-size: 1rem;
+      }
+
       h2 {
         font-size: 2rem;
       }
@@ -339,13 +373,14 @@
 
   <!-- Hero Section -->
   <div class="hero">
-    <div class="tagline" id="tagline">Discover the future of digital experiences</div>
+    <div class="hero-slider">
+      <img src="https://placehold.co/1920x1080/6366f1/ffffff?text=Hero+1" alt="Hero Background" id="hero-slide" loading="lazy">
+    </div>
+    <div class="hero-content">
+      <div class="tagline" id="tagline">Discover the future of digital experiences</div>
+      <a href="#sec1-title" class="get-started-btn" id="get-started">Get Started Now</a>
+    </div>
     <div class="scroll-indicator">↓</div>
-  </div>
-
-  <!-- Image Slider -->
-  <div class="slider">
-    <img src="https://placehold.co/800x400/6366f1/ffffff?text=Image+1" alt="Slide 1" loading="lazy" id="slide">
   </div>
 
   <!-- Sections 1-7 -->
@@ -421,6 +456,7 @@
     const translations = {
       en: {
         tagline: "Discover the future of digital experiences",
+        getStarted: "Get Started Now",
         sec1: { title: "Innovation at its Core", desc: "We blend cutting-edge technology with intuitive design to create seamless digital experiences that transform how you interact with the world." },
         sec2: { title: "Global Perspective", desc: "Our solutions are built for a connected world, supporting multiple languages and cultural contexts to serve a truly global audience." },
         sec3: { title: "Sustainable Design", desc: "We prioritize eco-friendly practices in our development process, reducing digital carbon footprint while maintaining high performance." },
@@ -436,6 +472,7 @@
       },
       fr: {
         tagline: "Découvrez l'avenir des expériences numériques",
+        getStarted: "Commencer maintenant",
         sec1: { title: "L'innovation au cœur", desc: "Nous combinons la technologie de pointe avec un design intuitif pour créer des expériences numériques fluides qui transforment votre interaction avec le monde." },
         sec2: { title: "Perspective mondiale", desc: "Nos solutions sont conçues pour un monde connecté, prenant en charge plusieurs langues et contextes culturels pour servir un public véritablement mondial." },
         sec3: { title: "Conception durable", desc: "Nous privilégions les pratiques écologiques dans notre processus de développement, réduisant l'empreinte carbone numérique tout en maintenant des performances élevées." },
@@ -451,6 +488,7 @@
       },
       ar: {
         tagline: "اكتشف مستقبل التجارب الرقمية",
+        getStarted: "ابدأ الآن",
         sec1: { title: "الابتكار في صميم عملنا", desc: "نجمع بين أحدث التقنيات والتصميم البديهي لإنشاء تجارب رقمية سلسة تُحدث تحولاً في طريقة تفاعلك مع العالم." },
         sec2: { title: "رؤية عالمية", desc: "تم تصميم حلولنا لعالم متصل، حيث ندعم لغات متعددة وسياقات ثقافية لخدمة جمهور عالمي حقًا." },
         sec3: { title: "تصميم مستدام", desc: "نحن نعطي الأولوية للممارسات الصديقة للبيئة في عملية التطوير لدينا، مما يقلل من البصمة الكربونية الرقمية مع الحفاظ على أداء عالٍ." },
@@ -473,6 +511,7 @@
     // Update all text elements
     function updateLanguage(lang) {
       document.getElementById('tagline').textContent = translations[lang].tagline;
+      document.getElementById('get-started').textContent = translations[lang].getStarted;
       document.getElementById('sec1-title').textContent = translations[lang].sec1.title;
       document.getElementById('sec1-desc').textContent = translations[lang].sec1.desc;
       document.getElementById('sec2-title').textContent = translations[lang].sec2.title;
@@ -548,23 +587,23 @@
       document.getElementById('intro').classList.add('hidden');
     }, 2500);
 
-    // ================== SLIDER ==================
-    const images = [
-      'https://placehold.co/800x400/6366f1/ffffff?text=Image+1',
-      'https://placehold.co/800x400/8b5cf6/ffffff?text=Image+2',
-      'https://placehold.co/800x400/06b6d4/ffffff?text=Image+3',
-      'https://placehold.co/800x400/10b981/ffffff?text=Image+4',
-      'https://placehold.co/800x400/f59e0b/ffffff?text=Image+5'
+    // ================== HERO SLIDER ==================
+    const heroImages = [
+      'https://placehold.co/1920x1080/6366f1/ffffff?text=Hero+1',
+      'https://placehold.co/1920x1080/8b5cf6/ffffff?text=Hero+2',
+      'https://placehold.co/1920x1080/06b6d4/ffffff?text=Hero+3',
+      'https://placehold.co/1920x1080/10b981/ffffff?text=Hero+4',
+      'https://placehold.co/1920x1080/f59e0b/ffffff?text=Hero+5'
     ];
-    let currentSlide = 0;
-    const slideElement = document.getElementById('slide');
+    let currentHeroSlide = 0;
+    const heroSlideElement = document.getElementById('hero-slide');
 
-    function nextSlide() {
-      currentSlide = (currentSlide + 1) % images.length;
-      slideElement.src = images[currentSlide];
+    function nextHeroSlide() {
+      currentHeroSlide = (currentHeroSlide + 1) % heroImages.length;
+      heroSlideElement.src = heroImages[currentHeroSlide];
     }
 
-    setInterval(nextSlide, 3000);
+    setInterval(nextHeroSlide, 4000);
 
     // ================== SCROLL ANIMATIONS ==================
     const sections = document.querySelectorAll('section');
@@ -581,7 +620,6 @@
     }
 
     window.addEventListener('scroll', checkScroll);
-    // Trigger on load
     setTimeout(checkScroll, 100);
 
     // ================== CUSTOM CURSOR ==================
@@ -605,3 +643,4 @@
   </script>
 </body>
 </html>
+
