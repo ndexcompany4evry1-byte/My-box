@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>منتج mes الاحترافية | Black Luxury</title>
+  <title>منتجاتي الاحترافية | Black Luxury</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -285,7 +285,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      aria-label: "إغلاق";
     }
 
     .close-modal:hover {
@@ -488,31 +487,46 @@
       setTheme(currentTheme === 'dark' ? 'light' : 'dark');
     });
 
-    // === 4. Modal Handling ===
+    // === 4. Modal + Auto-Redirect on Product Request ===
     const modal = document.getElementById('serviceModal');
-    const closeModalBtn = document.querySelector('.close-modal');
     const serviceButtons = document.querySelectorAll('.service-btn');
+
+    // روابط الصفحات المستهدفة
+    const productPages = {
+      'business': 'business.html',
+      'nfc': 'nfc.html',
+      'dashboard': 'dashboard.html'
+    };
 
     serviceButtons.forEach(btn => {
       btn.addEventListener('click', () => {
         const service = btn.getAttribute('data-service');
-        const title = {
+        const titleMap = {
           'business': { ar: 'طلب بطاقة مهنية فاخرة', en: 'Order Premium Business Card' },
           'nfc': { ar: 'طلب بطاقة NFC ذكية', en: 'Order Smart NFC Card' },
           'dashboard': { ar: 'طلب لوحة مهنية شخصية', en: 'Order Personal Professional Dashboard' }
         };
 
+        // تحديث النصوص حسب اللغة
         document.getElementById('modalTitle').textContent = 
-          currentLang === 'ar' ? title[service].ar : title[service].en;
+          currentLang === 'ar' ? titleMap[service].ar : titleMap[service].en;
         
         document.getElementById('modalDesc').textContent = 
-          currentLang === 'ar' ? 'شكراً لاهتمامك! سيتم التواصل معك قريباً.' : 'Thank you for your interest! We will contact you soon.';
+          currentLang === 'ar' ? 'شكراً لاهتمامك! سيتم تحويلك الآن...' : 'Thank you! Redirecting you now...';
 
+        // إظهار المودال
         modal.classList.add('active');
+
+        // التحويل بعد 1.5 ثانية
+        setTimeout(() => {
+          modal.classList.remove('active');
+          window.location.href = productPages[service];
+        }, 1500);
       });
     });
 
-    closeModalBtn.addEventListener('click', () => {
+    // إغلاق يدوي (لن يوقف التحويل، لكنه متاح لأغراض الوصول)
+    document.querySelector('.close-modal').addEventListener('click', () => {
       modal.classList.remove('active');
     });
 
@@ -528,5 +542,3 @@
   </script>
 </body>
 </html>
-
-
