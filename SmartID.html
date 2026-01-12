@@ -1,21 +1,28 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SmartID - هويتك الذكية</title>
-  <!-- Tailwind CSS via CDN (with RTL support) -->
+  <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       corePlugins: { preflight: true },
-      plugins: [],
       darkMode: 'class'
     };
   </script>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <!-- QR Code Library -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap');
     body {
+      font-family: 'Tajawal', sans-serif;
+      direction: rtl;
+    }
+    input, textarea, select, button {
       font-family: 'Tajawal', sans-serif;
     }
     .fade-enter {
@@ -27,21 +34,6 @@
       transform: translateX(0);
       transition: all 0.3s ease;
     }
-    .fade-exit {
-      opacity: 1;
-      transform: translateX(0);
-    }
-    .fade-exit-active {
-      opacity: 0;
-      transform: translateX(-20px);
-      transition: all 0.3s ease;
-    }
-    /* Mock QR pattern container */
-    .qr-cell {
-      position: absolute;
-      background-color: currentColor;
-    }
-    /* Disable image drag */
     img {
       user-select: none;
       -webkit-user-drag: none;
@@ -50,13 +42,10 @@
 </head>
 <body class="bg-gradient-to-br from-slate-50 to-gray-100 min-h-screen">
 
-<!-- سنملأ هذا المحتوى ديناميًا باستخدام JS -->
 <div id="app" class="min-h-screen"></div>
 
 <script>
-// ============ VANILLA JS IMPLEMENTATION ============
-
-// State
+// ========== STATE ==========
 let profiles = [{
   id: 'profile-' + Math.random().toString(36).substr(2, 9),
   name: '',
@@ -69,22 +58,17 @@ let profiles = [{
   bio: '',
   avatar: '',
   social: { instagram: '', twitter: '', linkedin: '', facebook: '', website: '' },
-  services: [],
-  workingHours: '',
-  customFields: [],
   design: {
     qrStyle: 'square',
     qrColor: '#2563eb',
     bgType: 'gradient',
     bgColor: '#ffffff',
     bgGradient: 'bg-gradient-to-br from-blue-50 to-indigo-100',
-    logoUrl: '',
-    qrPosition: 'center'
+    logoUrl: ''
   }
 }];
 
 let currentProfileId = profiles[0].id;
-let selectedProduct = 'qr';
 let isDigitalView = false;
 let currentStep = 1;
 let password = '';
@@ -93,16 +77,12 @@ let lastScan = '';
 let darkMode = false;
 let activePreset = 'minimal';
 
-// DOM References
 const app = document.getElementById('app');
 
-// Get current profile
+// ========== UTILS ==========
 const getCurrentProfile = () => profiles.find(p => p.id === currentProfileId) || profiles[0];
-
-// Generate unique URL
 const getUniqueUrl = () => `https://smartid.example/${currentProfileId}`;
 
-// Update profile
 const updateProfile = (field, value) => {
   profiles = profiles.map(p => p.id === currentProfileId ? { ...p, [field]: value } : p);
   render();
@@ -122,7 +102,6 @@ const updateSocial = (platform, value) => {
   render();
 };
 
-// Add new profile
 const addNewProfile = () => {
   const newProfile = {
     id: 'profile-' + Math.random().toString(36).substr(2, 9),
@@ -136,17 +115,13 @@ const addNewProfile = () => {
     bio: '',
     avatar: '',
     social: { instagram: '', twitter: '', linkedin: '', facebook: '', website: '' },
-    services: [],
-    workingHours: '',
-    customFields: [],
     design: {
       qrStyle: 'square',
       qrColor: '#2563eb',
       bgType: 'gradient',
       bgColor: '#ffffff',
       bgGradient: 'bg-gradient-to-br from-blue-50 to-indigo-100',
-      logoUrl: '',
-      qrPosition: 'center'
+      logoUrl: ''
     }
   };
   profiles.push(newProfile);
@@ -155,7 +130,6 @@ const addNewProfile = () => {
   render();
 };
 
-// Presets
 const applyPreset = (preset) => {
   activePreset = preset;
   const current = getCurrentProfile();
@@ -188,115 +162,6 @@ const applyPreset = (preset) => {
   updateProfileDesign(presets[preset]);
 };
 
-// Mock QR Pattern (as SVG-like divs)
-const renderMockQR = (size = 80, color = '#2563eb', style = 'square') => {
-  const cellSize = Math.floor((size * 0.8) / 21);
-  const padding = Math.floor((size - size * 0.8) / 2);
-  let html = `<div class="relative flex items-center justify-center" style="width:${size}px;height:${size}px;color:${color}">`;
-
-  // Position markers (corners)
-  const marker = (top, left) => `
-    <div class="absolute" style="top:${top}px;left:${left}px;width:${7*cellSize}px;height:${7*cellSize}px">
-      <div class="w-full h-full border-4 border-current rounded-[10%]"></div>
-      <div class="absolute inset-2 border-4 border-current rounded-[15%]"></div>
-      <div class="absolute inset-4 bg-current rounded-[20%]"></div>
-    </div>`;
-
-  html += marker(padding, padding);
-  html += marker(padding, size - padding - 7*cellSize);
-  html += marker(size - padding - 7*cellSize, padding);
-
-  // Data cells
-  for (let i = 0; i < 441; i++) {
-    const row = Math.floor(i / 21);
-    const col = i % 21;
-    const skip = (row < 7 && col < 7) || (row < 7 && col > 14) || (row > 14 && col < 7) ||
-                 (row === 6 && col === 6) || (row === 6 && col === 14) || (row === 14 && col === 6);
-    if (skip) continue;
-    const fill = Math.random() > 0.6;
-    if (!fill) continue;
-    const borderRadius = style === 'dots' ? '50%' : style === 'circular' ? '50%' : style === 'rounded' ? '4px' : '0';
-    html += `
-      <div class="qr-cell" style="
-        top: ${padding + row * cellSize}px;
-        left: ${padding + col * cellSize}px;
-        width: ${cellSize - 1}px;
-        height: ${cellSize - 1}px;
-        border-radius: ${borderRadius};
-      "></div>`;
-  }
-
-  // Center logo
-  html += `<div class="absolute w-8 h-8 bg-white rounded-full flex items-center justify-center z-10">
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 7h2v2H3zm0 4h2v2H3zm0 4h2v2H3zm18-8h-2v2h2zm0 4h-2v2h2zm0 4h-2v2h2zM9 3h2v2H9zm4 0h2v2h-2zm-8 18h2v-2H3zm18 0h2v-2h-2zM9 19h2v2H9zm4 0h2v2h-2z"/></svg>
-  </div>`;
-
-  html += '</div>';
-  return html;
-};
-
-// Render QR visual
-const renderQrVisual = () => {
-  const profile = getCurrentProfile();
-  const design = profile.design;
-  const qrClasses = {
-    square: 'rounded-none',
-    rounded: 'rounded-xl',
-    circular: 'rounded-full',
-    dots: 'rounded-full'
-  };
-  const cls = qrClasses[design.qrStyle] || 'rounded-none';
-  return `
-    <div class="bg-white p-3 flex flex-col items-center justify-center shadow-lg ${cls}" style="background-color:${design.qrColor}">
-      <div class="text-center">
-        ${renderMockQR(80, design.qrColor, design.qrStyle)}
-        <span class="text-xs font-medium text-white mt-2">امسحني ضوئياً</span>
-      </div>
-    </div>`;
-};
-
-// Render NFC chip
-const renderNfcChip = () => `
-  <div class="absolute bottom-4 right-4 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-full p-2 shadow-lg">
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-6 h-6 text-white">
-      <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line>
-    </svg>
-  </div>`;
-
-// Render card preview
-const renderCardPreview = () => {
-  const profile = getCurrentProfile();
-  const design = profile.design;
-  const bgStyle = design.bgType === 'color' ? `background-color: ${design.bgColor};` : '';
-  const positionClasses = {
-    'top-left': 'absolute top-6 left-6',
-    'top-right': 'absolute top-6 right-6',
-    'bottom-left': 'absolute bottom-6 left-6',
-    'bottom-right': 'absolute bottom-6 right-6',
-    'center': 'absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'
-  };
-  const qrPosClass = positionClasses[design.qrPosition] || positionClasses.center;
-
-  let avatarHtml = '';
-  if (design.logoUrl) {
-    avatarHtml = `<img src="${design.logoUrl}" alt="Logo" class="h-8 object-contain" onerror="this.src='https://placehold.co/100x40/2563eb/white?text=LOGO'">`;
-  } else if (profile.avatar) {
-    avatarHtml = `<img src="${profile.avatar}" alt="Avatar" class="w-12 h-12 rounded-full object-cover border-2 border-white shadow-lg" onerror="this.src='https://placehold.co/80x80/2563eb/white?text=${(profile.name?.charAt(0) || 'U')}'">`;
-  } else {
-    avatarHtml = `<div class="w-12 h-12 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold text-lg">${profile.name?.charAt(0) || 'أنت'}</div>`;
-  }
-
-  return `
-    <div class="relative bg-white rounded-xl shadow-2xl overflow-hidden border-2 border-gray-100 ${design.bgGradient}" style="width:400px;height:400px;${bgStyle}">
-      ${(design.logoUrl || profile.avatar) ? `<div class="absolute top-4 left-1/2 transform -translate-x-1/2">${avatarHtml}</div>` : ''}
-      <div class="${qrPosClass}">${renderQrVisual()}</div>
-      ${(selectedProduct === 'nfc' || selectedProduct === 'both') ? renderNfcChip() : ''}
-      <div class="absolute top-0 left-0 w-16 h-16 bg-blue-500/10 rounded-br-full"></div>
-      <div class="absolute bottom-0 right-0 w-16 h-16 bg-indigo-600/10 rounded-tl-full"></div>
-    </div>`;
-};
-
-// Generate vCard
 const generateVCard = () => {
   const profile = getCurrentProfile();
   const vCard = `BEGIN:VCARD
@@ -321,7 +186,6 @@ END:VCARD`;
   URL.revokeObjectURL(url);
 };
 
-// Copy to clipboard
 const copyToClipboard = async (text) => {
   try {
     await navigator.clipboard.writeText(text);
@@ -332,13 +196,11 @@ const copyToClipboard = async (text) => {
   }
 };
 
-// Toggle dark mode
 const toggleDarkMode = () => {
   darkMode = !darkMode;
   render();
 };
 
-// Mock scan (every 30s in digital view)
 let scanInterval = null;
 const startMockScan = () => {
   if (scanInterval) clearInterval(scanInterval);
@@ -351,13 +213,381 @@ const startMockScan = () => {
   }, 30000);
 };
 
-// Main render function
+// ========== RENDERERS ==========
+const renderQrVisual = () => {
+  const profile = getCurrentProfile();
+  const design = profile.design;
+  const qrClasses = {
+    square: '',
+    rounded: 'rounded-xl',
+    circular: 'rounded-full',
+    dots: 'rounded-full'
+  };
+  const cls = qrClasses[design.qrStyle] || '';
+
+  return `
+    <div id="qr-preview-container" class="bg-white p-3 flex flex-col items-center justify-center shadow-lg ${cls}" style="background-color:${design.bgType === 'color' ? design.bgColor : '#ffffff'}; width: 120px; height: 120px;">
+      <div id="qr-container" class="w-full h-full flex items-center justify-center"></div>
+      <span class="text-xs font-medium text-gray-600 mt-2">امسحني ضوئياً</span>
+    </div>`;
+};
+
+const renderNfcChip = () => `
+  <div class="absolute bottom-4 right-4 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-full p-2 shadow-lg">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-6 h-6 text-white">
+      <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line>
+    </svg>
+  </div>`;
+
+const renderCardPreview = () => {
+  const profile = getCurrentProfile();
+  const design = profile.design;
+  const bgStyle = design.bgType === 'color' ? `background-color: ${design.bgColor};` : '';
+  
+  let avatarHtml = '';
+  if (design.logoUrl) {
+    avatarHtml = `<img src="${design.logoUrl}" alt="Logo" class="h-8 object-contain" onerror="this.src='https://placehold.co/100x40/2563eb/white?text=LOGO'">`;
+  } else if (profile.avatar) {
+    avatarHtml = `<img src="${profile.avatar}" alt="Avatar" class="w-12 h-12 rounded-full object-cover border-2 border-white shadow-lg" onerror="this.src='https://placehold.co/80x80/2563eb/white?text=${encodeURIComponent(profile.name?.charAt(0) || 'U')}'">`;
+  } else {
+    avatarHtml = `<div class="w-12 h-12 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold text-lg">${profile.name?.charAt(0) || 'أنت'}</div>`;
+  }
+
+  return `
+    <div class="relative bg-white rounded-xl shadow-2xl overflow-hidden border-2 border-gray-100 ${design.bgGradient}" style="width:400px;height:400px;${bgStyle}">
+      ${(design.logoUrl || profile.avatar) ? `<div class="absolute top-4 left-1/2 transform -translate-x-1/2">${avatarHtml}</div>` : ''}
+      <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">${renderQrVisual()}</div>
+      ${renderNfcChip()}
+      <div class="absolute top-0 left-0 w-16 h-16 bg-blue-500/10 rounded-br-full"></div>
+      <div class="absolute bottom-0 right-0 w-16 h-16 bg-indigo-600/10 rounded-tl-full"></div>
+    </div>`;
+};
+
+const renderProfileForm = () => {
+  const profile = getCurrentProfile();
+  return `
+    <div class="space-y-6">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">الاسم الكامل</label>
+        <input oninput="updateProfile('name', this.value)" value="${profile.name}" type="text" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="أدخل اسمك الكامل">
+      </div>
+      
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">المسمى الوظيفي</label>
+        <input oninput="updateProfile('title', this.value)" value="${profile.title}" type="text" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="مصمم جرافيك، مطور ويب...">
+      </div>
+      
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">الشركة</label>
+        <input oninput="updateProfile('company', this.value)" value="${profile.company}" type="text" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="اسم شركتك">
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">رقم الهاتف</label>
+          <input oninput="updateProfile('phone', this.value)" value="${profile.phone}" type="tel" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="0501234567">
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">البريد الإلكتروني</label>
+          <input oninput="updateProfile('email', this.value)" value="${profile.email}" type="email" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="example@email.com">
+        </div>
+      </div>
+      
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">الموقع الإلكتروني</label>
+        <input oninput="updateProfile('website', this.value)" value="${profile.website}" type="url" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="https://yourwebsite.com">
+      </div>
+      
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">الموقع</label>
+        <input oninput="updateProfile('location', this.value)" value="${profile.location}" type="text" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="الرياض، المملكة العربية السعودية">
+      </div>
+      
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">نبذة عني</label>
+        <textarea oninput="updateProfile('bio', this.value)" rows="3" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="أخبر العالم عن نفسك...">${profile.bio}</textarea>
+      </div>
+      
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">الروابط الاجتماعية</label>
+        <div class="space-y-3">
+          ${Object.entries(profile.social).map(([platform, value]) => {
+            const labels = {
+              instagram: 'إنستغرام',
+              twitter: 'تويتر', 
+              linkedin: 'لينكد إن',
+              facebook: 'فيسبوك',
+              website: 'موقع شخصي'
+            };
+            return `
+              <div class="flex items-center space-x-3">
+                <span class="w-24 text-gray-600">${labels[platform]}</span>
+                <input oninput="updateSocial('${platform}', this.value)" value="${value}" type="text" placeholder="${platform === 'website' ? 'yourwebsite.com' : platform + ' username'}" class="flex-1 px-3 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-indigo-500">
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+};
+
+const renderDesignStep = () => {
+  const profile = getCurrentProfile();
+  const design = profile.design;
+  
+  return `
+    <div class="space-y-6">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">القوالب الجاهزة</label>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <button onclick="applyPreset('minimal')" class="p-3 rounded-xl border ${activePreset === 'minimal' ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200 hover:border-indigo-300'} text-center">
+            <div class="w-full bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg h-16 mb-2"></div>
+            <span class="font-medium">بسيط</span>
+          </button>
+          <button onclick="applyPreset('business')" class="p-3 rounded-xl border ${activePreset === 'business' ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200 hover:border-indigo-300'} text-center">
+            <div class="w-full bg-gradient-to-br from-blue-50 to-indigo-100 rounded-lg h-16 mb-2"></div>
+            <span class="font-medium">احترافي</span>
+          </button>
+          <button onclick="applyPreset('creative')" class="p-3 rounded-xl border ${activePreset === 'creative' ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200 hover:border-indigo-300'} text-center">
+            <div class="w-full bg-gradient-to-br from-purple-50 to-pink-100 rounded-lg h-16 mb-2"></div>
+            <span class="font-medium">إبداعي</span>
+          </button>
+        </div>
+      </div>
+      
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">لون رمز الاستجابة السريعة</label>
+        <div class="flex items-center space-x-3">
+          <input type="color" id="qrColorPicker" value="${design.qrColor}" class="h-10 w-10 rounded cursor-pointer" onchange="updateProfileDesign({ qrColor: this.value })">
+          <span id="qrColorValue" class="text-gray-600">${design.qrColor}</span>
+        </div>
+      </div>
+      
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">شكل رمز الاستجابة السريعة</label>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+          ${['square', 'rounded', 'circular', 'dots'].map(style => {
+            const selected = design.qrStyle === style;
+            const labels = {
+              square: 'مربع',
+              rounded: 'زوايا مدورة',
+              circular: 'دائري',
+              dots: 'نقاط'
+            };
+            return `
+              <button onclick="updateProfileDesign({ qrStyle: '${style}' })" class="p-2 rounded-lg border flex flex-col items-center ${selected ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200 hover:border-indigo-300'}">
+                <div class="w-12 h-12 mb-1 flex items-center justify-center ${style === 'square' ? '' : style}">
+                  ${style === 'square' ? '<div class="w-8 h-8 bg-current"></div>' : ''}
+                  ${style === 'rounded' ? '<div class="w-8 h-8 bg-current rounded-xl"></div>' : ''}
+                  ${style === 'circular' ? '<div class="w-8 h-8 bg-current rounded-full"></div>' : ''}
+                  ${style === 'dots' ? '<div class="flex flex-wrap gap-1 justify-center"><div class="w-2 h-2 bg-current rounded-full"></div><div class="w-2 h-2 bg-current rounded-full"></div><div class="w-2 h-2 bg-current rounded-full"></div><div class="w-2 h-2 bg-current rounded-full"></div></div>' : ''}
+                </div>
+                <span class="text-xs">${labels[style]}</span>
+              </button>
+            `;
+          }).join('')}
+        </div>
+      </div>
+      
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">خلفية البطاقة</label>
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="updateProfileDesign({ bgType: 'color' })" class="p-2 rounded-lg border flex flex-col items-center ${design.bgType === 'color' ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200 hover:border-indigo-300'}">
+            <div class="w-12 h-12 mb-1 bg-white border"></div>
+            <span class="text-xs">لون واحد</span>
+          </button>
+          <button onclick="updateProfileDesign({ bgType: 'gradient' })" class="p-2 rounded-lg border flex flex-col items-center ${design.bgType === 'gradient' ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200 hover:border-indigo-300'}">
+            <div class="w-12 h-12 mb-1 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-lg"></div>
+            <span class="text-xs">تدرج لوني</span>
+          </button>
+        </div>
+        
+        ${design.bgType === 'color' ? `
+          <div class="mt-4 flex items-center space-x-3">
+            <input type="color" id="bgColorPicker" value="${design.bgColor}" class="h-10 w-10 rounded cursor-pointer" onchange="updateProfileDesign({ bgColor: this.value })">
+            <span id="bgColorValue" class="text-gray-600">${design.bgColor}</span>
+          </div>
+        ` : `
+          <div class="mt-4">
+            <select onchange="updateProfileDesign({ bgGradient: this.value })" class="w-full px-3 py-2 rounded-lg border border-gray-200">
+              <option value="bg-gradient-to-br from-blue-50 to-indigo-100" ${design.bgGradient === 'bg-gradient-to-br from-blue-50 to-indigo-100' ? 'selected' : ''}>أزرق إلى نيلي</option>
+              <option value="bg-gradient-to-br from-gray-50 to-gray-100" ${design.bgGradient === 'bg-gradient-to-br from-gray-50 to-gray-100' ? 'selected' : ''}>رمادي فاتح</option>
+              <option value="bg-gradient-to-br from-purple-50 to-pink-100" ${design.bgGradient === 'bg-gradient-to-br from-purple-50 to-pink-100' ? 'selected' : ''}>بنفسجي إلى وردي</option>
+              <option value="bg-gradient-to-br from-green-50 to-teal-100" ${design.bgGradient === 'bg-gradient-to-br from-green-50 to-teal-100' ? 'selected' : ''}>أخضر إلى فيروزي</option>
+              <option value="bg-gradient-to-br from-amber-50 to-orange-100" ${design.bgGradient === 'bg-gradient-to-br from-amber-50 to-orange-100' ? 'selected' : ''}>كهرماني إلى برتقالي</option>
+            </select>
+          </div>
+        `}
+      </div>
+      
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">شعار</label>
+        <div class="flex flex-col items-center p-4 border-2 border-dashed rounded-xl border-gray-300">
+          ${design.logoUrl ? `
+            <img src="${design.logoUrl}" alt="Logo Preview" class="h-16 mb-4 object-contain">
+            <button onclick="updateProfileDesign({ logoUrl: '' })" class="px-3 py-1 text-sm bg-red-500 text-white rounded-lg">إزالة الشعار</button>
+          ` : `
+            <div class="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="text-gray-400">
+                <circle cx="12" cy="12" r="4"></circle>
+                <path d="M12 8v8"></path>
+                <path d="M8 12h8"></path>
+              </svg>
+            </div>
+            <p class="text-gray-500 text-sm mb-2">انقر لتحميل شعار شركتك</p>
+            <input type="file" id="logoUpload" accept="image/*" class="hidden">
+            <button onclick="document.getElementById('logoUpload').click()" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm">تحميل</button>
+          `}
+        </div>
+      </div>
+    </div>
+  `;
+};
+
+const renderSecuritySettings = () => {
+  return `
+    <div class="space-y-6">
+      <div class="bg-amber-50 p-4 rounded-xl border border-amber-200">
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <svg class="h-5 w-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+            </svg>
+          </div>
+          <div class="mr-3">
+            <h3 class="text-sm font-medium text-amber-800">حماية ملفك الشخصي</h3>
+            <p class="mt-1 text-sm text-amber-700">يمكنك تأمين معلوماتك الحساسة بكلمة مرور اختيارية</p>
+          </div>
+        </div>
+      </div>
+      
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">حماية بكلمة مرور</label>
+        <div class="flex items-center space-x-3">
+          <input type="checkbox" id="passwordToggle" onchange="togglePasswordProtection(this.checked)" class="h-4 w-4 text-indigo-600 rounded focus:ring-indigo-500">
+          <label for="passwordToggle" class="text-sm text-gray-700">تفعيل الحماية بكلمة مرور</label>
+        </div>
+      </div>
+      
+      <div id="passwordSection" class="hidden">
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">كلمة المرور</label>
+            <input type="password" id="passwordInput" oninput="password = this.value" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="أدخل كلمة مرور">
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">تأكيد كلمة المرور</label>
+            <input type="password" oninput="validatePassword(this.value)" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="أعد إدخال كلمة المرور">
+            <p id="passwordError" class="mt-1 text-sm text-red-500 hidden">كلمة المرور غير متطابقة</p>
+          </div>
+          
+          <div class="bg-blue-50 p-3 rounded-lg">
+            <h4 class="font-medium text-blue-800 mb-1">نصائح كلمة المرور الآمنة:</h4>
+            <ul class="text-sm text-blue-700 space-y-1">
+              <li>• استخدم 8 أحرف على الأقل</li>
+              <li>• اجمع بين الأحرف الكبيرة والصغيرة</li>
+              <li>• أضف أرقام ورموز خاصة</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">إعدادات الخصوصية</label>
+        <div class="space-y-3">
+          <div class="flex items-center space-x-3">
+            <input type="checkbox" id="analyticsToggle" checked class="h-4 w-4 text-indigo-600 rounded focus:ring-indigo-500">
+            <label for="analyticsToggle" class="text-sm text-gray-700">تمكين إحصائيات المسح (عدد المرات، آخر مسح)</label>
+          </div>
+          
+          <div class="flex items-center space-x-3">
+            <input type="checkbox" id="contactToggle" checked class="h-4 w-4 text-indigo-600 rounded focus:ring-indigo-500">
+            <label for="contactToggle" class="text-sm text-gray-700">السماح بتنزيل بطاقة الاتصال (vCard)</label>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+};
+
+const renderExportStep = () => {
+  return `
+    <div class="space-y-6">
+      <div class="text-center">
+        <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+            <path d="M3 3v18h18"></path>
+            <path d="M19 9l-5 5-5-5"></path>
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900">تهانينا! هويتك جاهزة</h3>
+        <p class="text-gray-600 mt-2">اختر كيفية استخدام هويتك الذكية</p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-gradient-to-br from-indigo-50 to-indigo-100 p-4 rounded-xl border border-indigo-200">
+          <h4 class="font-bold text-indigo-900 mb-2">النسخة الرقمية</h4>
+          <p class="text-indigo-800 text-sm mb-3">رابط فريد يؤدي مباشرة إلى ملفك الشخصي</p>
+          <div class="flex space-x-2">
+            <input id="profileUrl" readonly value="${getUniqueUrl()}" class="flex-1 px-3 py-2 text-sm border rounded-lg bg-white">
+            <button onclick="copyProfileUrl()" class="px-3 py-2 bg-indigo-600 text-white rounded-lg text-sm">نسخ</button>
+          </div>
+        </div>
+        
+        <div class="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-xl border border-green-200">
+          <h4 class="font-bold text-green-900 mb-2">النسخة المادية</h4>
+          <p class="text-green-800 text-sm mb-3">احصل على بطاقات مادية مع رمز QR وشريحة NFC</p>
+          <button onclick="initiateOrder('physical')" class="w-full px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium">طلب البطاقات</button>
+        </div>
+      </div>
+      
+      <div class="bg-gray-50 rounded-xl p-5">
+        <h4 class="font-bold text-gray-900 mb-3">خيارات التصدير الإضافية</h4>
+        
+        <div class="space-y-3">
+          <div class="flex items-center justify-between p-3 bg-white rounded-lg border">
+            <div>
+              <h5 class="font-medium">تنزيل رمز QR</h5>
+              <p class="text-sm text-gray-500">استخدمه في بطاقاتك، موقعك، أو أي مكان آخر</p>
+            </div>
+            <button onclick="downloadQR()" class="px-3 py-1 bg-indigo-600 text-white rounded-lg text-sm">تنزيل</button>
+          </div>
+          
+          <div class="flex items-center justify-between p-3 bg-white rounded-lg border">
+            <div>
+              <h5 class="font-medium">تصدير بطاقة الاتصال (vCard)</h5>
+              <p class="text-sm text-gray-500">ملف .vcf يمكنك مشاركته مع العملاء</p>
+            </div>
+            <button onclick="generateVCard()" class="px-3 py-1 bg-blue-600 text-white rounded-lg text-sm">تصدير</button>
+          </div>
+          
+          <div class="flex items-center justify-between p-3 bg-white rounded-lg border">
+            <div>
+              <h5 class="font-medium">مشاركة ملف التعريف</h5>
+              <p class="text-sm text-gray-500">شارك الرابط عبر وسائل التواصل الاجتماعي</p>
+            </div>
+            <button onclick="shareProfile()" class="px-3 py-1 bg-amber-600 text-white rounded-lg text-sm">مشاركة</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="text-center pt-4 border-t">
+        <button onclick="saveProfile()" class="px-6 py-3 bg-gradient-to-r from-indigo-600 to-blue-500 text-white rounded-xl font-medium hover:shadow-lg transition">حفظ الملف الشخصي</button>
+        <p class="text-sm text-gray-500 mt-2">يمكنك تعديل ملفك في أي وقت من لوحة التحكم</p>
+      </div>
+    </div>
+  `;
+};
+
+// ========== MAIN RENDER ==========
 const render = () => {
   const profile = getCurrentProfile();
   const design = profile.design;
 
   if (isDigitalView) {
-    // Digital View
     const hasContent = (v) => v && v.trim();
     const bgColor = darkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-indigo-50 to-blue-100';
     const cardBg = darkMode ? 'bg-gray-800' : 'bg-white';
@@ -367,7 +597,6 @@ const render = () => {
     app.innerHTML = `
       <div class="${bgColor} min-h-screen py-8 px-4 sm:px-6 lg:px-8">
         <div class="max-w-4xl mx-auto">
-          <!-- Header -->
           <div class="flex items-center justify-between mb-8">
             <button onclick="isDigitalView=false;render();" class="flex items-center space-x-2 ${darkMode ? 'text-indigo-400 hover:text-indigo-300' : 'text-indigo-600 hover:text-indigo-700'} font-medium">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="19 12 5 12 11 18 5 12 11 6 5 12"/></svg>
@@ -386,12 +615,11 @@ const render = () => {
           </div>
 
           <div class="${cardBg} rounded-2xl shadow-xl overflow-hidden">
-            <!-- Profile Header -->
             <div class="bg-gradient-to-r from-indigo-600 to-blue-500 p-8 text-white">
               <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                 <div class="flex items-center space-x-4 mb-4 sm:mb-0">
                   ${profile.avatar ? 
-                    `<img src="${profile.avatar}" alt="${profile.name}" class="w-20 h-20 rounded-full border-4 border-white shadow-lg" onerror="this.src='https://placehold.co/120x120/2563eb/white?text=${(profile.name?.charAt(0) || 'U')}'">` :
+                    `<img src="${profile.avatar}" alt="${profile.name}" class="w-20 h-20 rounded-full border-4 border-white shadow-lg" onerror="this.src='https://placehold.co/120x120/2563eb/white?text=${encodeURIComponent(profile.name?.charAt(0) || 'U')}'">` :
                     `<div class="w-20 h-20 rounded-full bg-white flex items-center justify-center text-indigo-600 font-bold text-2xl shadow-lg">${profile.name?.charAt(0) || 'U'}</div>`}
                   <div>
                     <h1 class="text-2xl md:text-3xl font-bold">${profile.name || 'اسمك'}</h1>
@@ -404,7 +632,6 @@ const render = () => {
             </div>
 
             <div class="p-8">
-              <!-- Contact Info -->
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                 ${hasContent(profile.phone) ? `<div class="flex items-start space-x-3 p-4 ${darkMode ? 'bg-indigo-900/30' : 'bg-indigo-50'} rounded-xl"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg><div><p class="text-sm font-medium ${mutedColor}">رقم الهاتف</p><p class="text-lg font-semibold">${profile.phone}</p></div></div>` : ''}
                 ${hasContent(profile.email) ? `<div class="flex items-start space-x-3 p-4 ${darkMode ? 'bg-blue-900/30' : 'bg-blue-50'} rounded-xl"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg><div><p class="text-sm font-medium ${mutedColor}">البريد الإلكتروني</p><p class="text-lg font-semibold">${profile.email}</p></div></div>` : ''}
@@ -414,13 +641,12 @@ const render = () => {
 
               ${hasContent(profile.bio) ? `<div class="mb-8 p-6 ${darkMode ? 'bg-gray-700' : 'bg-gray-50'} rounded-xl"><h3 class="text-lg font-bold ${textColor} mb-3">نبذة عني</h3><p class="${darkMode ? 'text-gray-300' : 'text-gray-700'} leading-relaxed">${profile.bio}</p></div>` : ''}
 
-              ${profile.services.length > 0 ? `<div class="mb-8 p-6 ${darkMode ? 'bg-amber-900/20' : 'bg-amber-50'} rounded-xl"><h3 class="text-lg font-bold ${textColor} mb-3">الخدمات</h3><div class="flex flex-wrap gap-2">${profile.services.map(s => `<span class="px-3 py-1 ${darkMode ? 'bg-amber-800 text-amber-100' : 'bg-amber-100 text-amber-800'} rounded-full text-sm font-medium">${s}</span>`).join('')}</div></div>` : ''}
+              ${profile.services && profile.services.length > 0 ? `<div class="mb-8 p-6 ${darkMode ? 'bg-amber-900/20' : 'bg-amber-50'} rounded-xl"><h3 class="text-lg font-bold ${textColor} mb-3">الخدمات</h3><div class="flex flex-wrap gap-2">${profile.services.map(s => `<span class="px-3 py-1 ${darkMode ? 'bg-amber-800 text-amber-100' : 'bg-amber-100 text-amber-800'} rounded-full text-sm font-medium">${s}</span>`).join('')}</div></div>` : ''}
 
               ${hasContent(profile.workingHours) ? `<div class="mb-8 p-6 ${darkMode ? 'bg-cyan-900/20' : 'bg-cyan-50'} rounded-xl"><h3 class="text-lg font-bold ${textColor} mb-3">ساعات العمل</h3><p class="${darkMode ? 'text-gray-300' : 'text-gray-700'}">${profile.workingHours}</p></div>` : ''}
 
-              ${profile.customFields.length > 0 ? `<div class="mb-8 p-6 ${darkMode ? 'bg-pink-900/20' : 'bg-pink-50'} rounded-xl"><h3 class="text-lg font-bold ${textColor} mb-3">معلومات إضافية</h3><div class="space-y-3">${profile.customFields.map(f => hasContent(f.label) && hasContent(f.value) ? `<div class="flex items-start space-x-3"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 4 3 8 7 8"></polyline><line x1="7" y1="4" x2="21" y2="4"></line><line x1="11" y1="12" x2="21" y2="12"></line><line x1="11" y1="16" x2="21" y2="16"></line><line x1="7" y1="20" x2="21" y2="20"></line><polyline points="3 8 7 12 3 16"></polyline></svg><div><p class="text-sm font-medium ${mutedColor}">${f.label}</p><p class="${darkMode ? 'text-gray-300' : 'text-gray-700'}">${f.value}</p></div></div>` : '').filter(Boolean).join('')}</div></div>` : ''}
+              ${profile.customFields && profile.customFields.length > 0 ? `<div class="mb-8 p-6 ${darkMode ? 'bg-pink-900/20' : 'bg-pink-50'} rounded-xl"><h3 class="text-lg font-bold ${textColor} mb-3">معلومات إضافية</h3><div class="space-y-3">${profile.customFields.map(f => hasContent(f.label) && hasContent(f.value) ? `<div class="flex items-start space-x-3"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 4 3 8 7 8"></polyline><line x1="7" y1="4" x2="21" y2="4"></line><line x1="11" y1="12" x2="21" y2="12"></line><line x1="11" y1="16" x2="21" y2="16"></line><line x1="7" y1="20" x2="21" y2="20"></line><polyline points="3 8 7 12 3 16"></polyline></svg><div><p class="text-sm font-medium ${mutedColor}">${f.label}</p><p class="${darkMode ? 'text-gray-300' : 'text-gray-700'}">${f.value}</p></div></div>` : '').filter(Boolean).join('')}</div></div>` : ''}
 
-              <!-- Social Links -->
               <div class="p-6 ${darkMode ? 'bg-gray-700' : 'bg-gray-50'} rounded-xl">
                 <h3 class="text-lg font-bold ${textColor} mb-4">تواصل معي</h3>
                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
@@ -441,7 +667,6 @@ const render = () => {
               </div>
             </div>
 
-            <!-- CTA -->
             <div class="px-8 py-4 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50 border-gray-100'} border-t flex flex-col sm:flex-row sm:items-center sm:justify-between">
               <div class="flex items-center space-x-4 mb-4 sm:mb-0">
                 <div class="flex items-center space-x-2 text-green-600"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg><span class="text-sm">تم التحقق من الهوية</span></div>
@@ -464,7 +689,6 @@ const render = () => {
       </div>
     `;
 
-    // Attach copy listener
     document.getElementById('copyLinkBtn')?.addEventListener('click', async () => {
       const success = await copyToClipboard(getUniqueUrl());
       if (success) {
@@ -483,7 +707,6 @@ const render = () => {
   // Design Studio View
   app.innerHTML = `
     <div class="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100">
-      <!-- Navigation -->
       <nav class="bg-white shadow-sm border-b border-gray-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="flex justify-between items-center h-16">
@@ -509,7 +732,6 @@ const render = () => {
 
         <div class="flex flex-col lg:flex-row gap-12">
           <div class="lg:w-2/3">
-            <!-- Step Navigation -->
             <div class="flex items-center justify-center mb-8">
               ${[1,2,3,4].map(step => `
                 <button onclick="currentStep=${step};render();" class="flex items-center justify-center w-10 h-10 rounded-full font-bold ${
@@ -519,7 +741,6 @@ const render = () => {
               `).join('')}
             </div>
 
-            <!-- Step Content -->
             <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100" id="step-content">
               ${currentStep === 1 ? renderProfileForm() : ''}
               ${currentStep === 2 ? renderDesignStep() : ''}
@@ -527,7 +748,6 @@ const render = () => {
               ${currentStep === 4 ? renderExportStep() : ''}
             </div>
 
-            <!-- Nav Buttons -->
             <div class="flex justify-between mt-8">
               <button onclick="if(currentStep>1){currentStep--;render();}" class="px-6 py-3 rounded-xl font-medium ${
                 currentStep === 1 ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -536,7 +756,6 @@ const render = () => {
             </div>
           </div>
 
-          <!-- Preview -->
           <div class="lg:w-1/3 sticky top-8">
             <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
               <h3 class="text-lg font-bold text-gray-900 mb-4 text-center">معاينة مباشرة</h3>
@@ -554,18 +773,176 @@ const render = () => {
   `;
 };
 
-// Render sub-components as strings
-const renderProfileForm = () => { /* ... implementation omitted for brevity ... */ return ''; };
-const renderDesignStep = () => { /* ... */ return ''; };
-const renderSecuritySettings = () => { /* ... */ return ''; };
-const renderExportStep = () => { /* ... */ return ''; };
+// ========== HELPER FUNCTIONS ==========
+const togglePasswordProtection = (enabled) => {
+  if (enabled) {
+    document.getElementById('passwordSection').classList.remove('hidden');
+  } else {
+    document.getElementById('passwordSection').classList.add('hidden');
+    password = '';
+  }
+  render();
+};
 
-// For brevity in this response, the full implementation of all sub-renderers is not included,
-// but they follow the same pattern: return HTML string with inline event handlers.
+const validatePassword = (confirmPassword) => {
+  const isValid = password === confirmPassword;
+  document.getElementById('passwordError').classList.toggle('hidden', isValid);
+  return isValid;
+};
 
-// Initial render
-render();
+const copyProfileUrl = async () => {
+  const url = getUniqueUrl();
+  try {
+    await navigator.clipboard.writeText(url);
+    const btn = document.querySelector('button[onclick="copyProfileUrl()"]');
+    btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>تم النسخ!';
+    setTimeout(() => {
+      btn.innerHTML = 'نسخ';
+    }, 2000);
+  } catch (err) {
+    console.error('فشل النسخ:', err);
+  }
+};
+
+const downloadQR = () => {
+  const profile = getCurrentProfile();
+  const canvas = document.querySelector('#qr-preview-container canvas');
+  
+  if (canvas) {
+    const link = document.createElement('a');
+    link.download = `${profile.name.replace(/\s+/g, '_') || 'smartid'}_qr.png`;
+    link.href = canvas.toDataURL();
+    link.click();
+  }
+};
+
+const shareProfile = () => {
+  const url = getUniqueUrl();
+  if (navigator.share) {
+    navigator.share({
+      title: 'ملفي الشخصي في SmartID',
+      text: 'اطّلع على ملفي الشخصي الرقمي',
+      url: url
+    }).catch(console.error);
+  } else {
+    copyToClipboard(url).then(success => {
+      if (success) {
+        alert('تم نسخ الرابط! يمكنك مشاركته الآن.');
+      }
+    });
+  }
+};
+
+const saveProfile = () => {
+  const data = {
+    profiles,
+    currentProfileId,
+    activePreset
+  };
+  localStorage.setItem('smartid_data', JSON.stringify(data));
+  
+  const originalBtnText = document.querySelector('button[onclick="saveProfile()"]').innerHTML;
+  document.querySelector('button[onclick="saveProfile()"]').innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>تم الحفظ!';
+  
+  setTimeout(() => {
+    document.querySelector('button[onclick="saveProfile()"]').innerHTML = originalBtnText;
+  }, 2000);
+};
+
+const loadSavedData = () => {
+  const savedData = localStorage.getItem('smartid_data');
+  if (savedData) {
+    try {
+      const data = JSON.parse(savedData);
+      profiles = data.profiles || profiles;
+      currentProfileId = data.currentProfileId || currentProfileId;
+      activePreset = data.activePreset || 'minimal';
+    } catch (e) {
+      console.error('خطأ في تحميل البيانات المحفوظة:', e);
+    }
+  }
+};
+
+const initiateOrder = (type) => {
+  alert(`سيتم تنفيذ طلبك ${type === 'physical' ? 'للبطاقات المادية' : 'للخدمات الرقمية'} في الإصدار الكامل من التطبيق`);
+};
+
+const renderRealQR = (size = 120, color = '#2563eb', containerId = 'qr-container') => {
+  const uniqueUrl = getUniqueUrl();
+  const qrContainer = document.getElementById(containerId);
+  
+  if (qrContainer) {
+    qrContainer.innerHTML = '';
+    QRCode.toCanvas(qrContainer, uniqueUrl, {
+      width: size,
+      color: {
+        dark: color,
+        light: '#ffffff'
+      }
+    }, function (error) {
+      if (error) console.error(error);
+    });
+    
+    const canvas = qrContainer.querySelector('canvas');
+    if (canvas) {
+      const ctx = canvas.getContext('2d');
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+      const logoSize = canvas.width / 5;
+      
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, logoSize/2 + 2, 0, 2 * Math.PI);
+      ctx.fillStyle = '#ffffff';
+      ctx.fill();
+      
+      ctx.fillStyle = color;
+      ctx.font = `${logoSize/2}px Arial`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('ID', centerX, centerY);
+    }
+  }
+};
+
+// ========== INIT ==========
+document.addEventListener('DOMContentLoaded', () => {
+  loadSavedData();
+  
+  document.getElementById('logoUpload')?.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        updateProfileDesign({ logoUrl: event.target.result });
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+  
+  document.getElementById('qrColorPicker')?.addEventListener('input', function() {
+    document.getElementById('qrColorValue').textContent = this.value;
+  });
+  
+  document.getElementById('bgColorPicker')?.addEventListener('input', function() {
+    document.getElementById('bgColorValue').textContent = this.value;
+  });
+  
+  render();
+});
+
+// Update QR after DOM render
+const originalRender = render;
+render = () => {
+  originalRender();
+  setTimeout(() => {
+    const profile = getCurrentProfile();
+    if (document.getElementById('qr-container')) {
+      renderRealQR(120, profile.design.qrColor, 'qr-container');
+    }
+  }, 100);
+};
 </script>
 
 </body>
 </html>
+
