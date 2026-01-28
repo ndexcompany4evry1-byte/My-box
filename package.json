@@ -1,0 +1,17 @@
+{
+  "name": "nfc-card-designer",
+  "version": "1.0.0",
+  "description": "نظام بسيط لتصميم وطلب بطاقات NFC",
+  "main": "api/order.js",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel deploy"
+  },
+  "dependencies": {
+    "mysql2": "^3.6.5",
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "@vercel/node": "^3.0.13"
+  }
+}
